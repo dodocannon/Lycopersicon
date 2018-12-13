@@ -23,6 +23,7 @@ public class TomatoCluster extends Group {
         this.appleTarget = appleTarget;
         this.height = height;
         this.width = width;
+
     }
     public void fill()
     {
@@ -30,7 +31,8 @@ public class TomatoCluster extends Group {
             for (int k = 0; k < height; k++) {
                 for (int i = 0; i < width; i++) {
                     int rand = MathUtils.random(4);
-                    Tomato curr = new Tomato(rand, rand == appleTarget, globalViewport, getX() + i * globalViewport.getScreenWidth() / 12, getY() + k * globalViewport.getScreenWidth() / 12);
+                    Tomato curr = new Tomato(rand, rand == appleTarget, globalViewport,  + i * globalViewport.getScreenWidth() / 12,  + k * globalViewport.getScreenWidth() / 12);
+
                     this.addActor(curr);
                 }
 

@@ -14,6 +14,7 @@ public class Lycopersicon extends Game {
 	
 	@Override
 	public void create () {
+		batch = new SpriteBatch();
 		this.setScreen(new LycopersiconScreen(this));
 	}
 
