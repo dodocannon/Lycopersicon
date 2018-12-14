@@ -35,13 +35,16 @@ public class LycopersiconScreen implements Screen{
     private Background tBackground;
 
     private int tStemNumber;
+    private float tTileSize;
 
     public LycopersiconScreen(Lycopersicon game) {
         this.game = game;
+        tViewport = new ScreenViewport();
+
         tBatch = new SpriteBatch();
 
-        tViewport = new ScreenViewport();
-        tWorld = new TomatoWorld(tViewport, tBatch); // 800 x 480 world
+        tTileSize = tViewport.getScreenWidth()/10;
+        tWorld = new TomatoWorld(tViewport, tBatch, tTileSize); // 800 x 480 world
 
         tStemNumber = MathUtils.random(4);
 
@@ -49,16 +52,16 @@ public class LycopersiconScreen implements Screen{
         tParams = new FreeTypeFontGenerator.FreeTypeFontParameter();
         tLayout = new GlyphLayout();
 
-        tParams.size = (int) (0.65 * (tViewport.getScreenHeight() / 5));
+        tParams.size = (int) (tViewport.getScreenHeight()/7);
         tParams.color = Color.BLACK;
         tFont = tGenerator.generateFont(tParams);
 
-        tCluster = new TomatoCluster(5,4,tStemNumber, tViewport,false);
+        tCluster = new TomatoCluster(5,4,tStemNumber, tViewport,true);
         tCluster.setDebug(true);
         tCluster.setPosition(0, 0);
         tCluster.fill();
 
-        tBackground= new Background(tViewport,tViewport.getScreenWidth()/10);
+        tBackground= new Background(tViewport,tTileSize);
 
 
         tWorld.addActor(tBackground);

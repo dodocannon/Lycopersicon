@@ -22,8 +22,7 @@ public class TomatoCluster extends Group {
         this.appleTarget = appleTarget;
         this.tomatoY = tomatoY;
         this.tomatoX = tomatoX;
-
-        System.out.println();
+        this.random = random;
         screenW = globalViewport.getScreenWidth();
         screenH = globalViewport.getScreenHeight();
         tomatoSize = screenW/12;
@@ -34,11 +33,13 @@ public class TomatoCluster extends Group {
     }
     public void fill()
     {
+        int rand;
+        //fills apples in systemic manner
         if (!random) {
             for (int k = 0; k < tomatoY; k++) {
                 float posX = 0;
                 for (int i = 0; i < tomatoX; i++) {
-                    int rand = MathUtils.random(4);
+                    rand = MathUtils.random(4);
                     if (i!=0)
                     {
                         posX+= tomatoSize;
@@ -54,8 +55,17 @@ public class TomatoCluster extends Group {
         }
         else
         {
-
+            for (int i = 0; i < tomatoX * tomatoY; i++)
+            {
+                rand = MathUtils.random(4);
+                Tomato curr = new Tomato(rand, rand == appleTarget, globalViewport, MathUtils.random(screenW), MathUtils.random(screenH));
+                addActor(curr);
+            }
         }
+
+    }
+    public void reset()
+    {
 
     }
 
