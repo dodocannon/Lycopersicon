@@ -55,10 +55,10 @@ public class LycopersiconScreen implements Screen{
 
         tCluster = new TomatoCluster(5,4,tStemNumber, tViewport,false);
         tCluster.setDebug(true);
-        tCluster.setPosition(tViewport.getScreenWidth()/2, 0);
+        tCluster.setPosition(0, 0);
         tCluster.fill();
 
-        tBackground= new Background(tViewport,64f);
+        tBackground= new Background(tViewport,tViewport.getScreenWidth()/10);
 
 
         tWorld.addActor(tBackground);
@@ -77,7 +77,6 @@ public class LycopersiconScreen implements Screen{
 
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
         tWorld.draw();
         tWorld.act(delta);
         drawHUD();
