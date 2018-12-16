@@ -55,7 +55,6 @@ public class LycopersiconScreen implements Screen{
 
        // System.out.println(tTileSize);
 
-        Gdx.input.setInputProcessor(tWorld);
     }
 
     @Override
@@ -85,6 +84,8 @@ public class LycopersiconScreen implements Screen{
 
         tWorld.addActor(tBackground);
         tWorld.addActor(tCluster);
+        Gdx.input.setInputProcessor(tWorld);
+
 
 
     }
