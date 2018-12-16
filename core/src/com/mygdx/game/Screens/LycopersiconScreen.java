@@ -20,7 +20,7 @@ import com.mygdx.game.TomatoCluster;
 import com.mygdx.game.TomatoWorld;
 
 
-public class LycopersiconScreen implements Screen{
+public class LycopersiconScreen implements Screen {
     final Lycopersicon game;
 
     private ScreenViewport tViewport;
@@ -44,16 +44,8 @@ public class LycopersiconScreen implements Screen{
         tBatch = new SpriteBatch();
 
 
-       // System.out.println(tViewport.getScreenWidth());
-
         tStemNumber = MathUtils.random(4);
 
-
-
-       // this works fine...  tBackground= new Background(tViewport,tViewport.getScreenWidth()/10);
-
-
-       // System.out.println(tTileSize);
 
     }
 
@@ -62,22 +54,22 @@ public class LycopersiconScreen implements Screen{
         tWorld = new TomatoWorld(tViewport, tBatch, tTileSize); // 800 x 480 world
 
         System.out.println(tViewport.getScreenWidth());
-        tTileSize = tViewport.getScreenWidth()/10;
+        tTileSize = tViewport.getScreenWidth() / 10;
 
         tGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Cabin_Sketch/CabinSketch-Regular.ttf"));
         tParams = new FreeTypeFontGenerator.FreeTypeFontParameter();
         tLayout = new GlyphLayout();
 
-        tParams.size = (int) (tViewport.getScreenHeight()/7);
+        tParams.size = (int) (tViewport.getScreenHeight() / 7);
 
         tParams.color = Color.BLACK;
         tFont = tGenerator.generateFont(tParams);
 
-        tBackground= new Background(tViewport,tTileSize); //this must be buggy
+        tBackground = new Background(tViewport, tTileSize); //this must be buggy
 
         System.out.println(tTileSize);
 
-        tCluster = new TomatoCluster(5,4,tStemNumber, tViewport,true, tTileSize);
+        tCluster = new TomatoCluster(5, 4,tViewport.getScreenWidth()/500, tStemNumber, tViewport, true, tTileSize);
         tCluster.setDebug(true);
         tCluster.setPosition(0, 0);
         tCluster.fill();
@@ -85,7 +77,6 @@ public class LycopersiconScreen implements Screen{
         tWorld.addActor(tBackground);
         tWorld.addActor(tCluster);
         Gdx.input.setInputProcessor(tWorld);
-
 
 
     }
@@ -129,14 +120,13 @@ public class LycopersiconScreen implements Screen{
     public void dispose() {
         tBatch.dispose();
     }
-    private void drawHUD()
-    {
+
+    private void drawHUD() {
         tBatch.begin();
         tLayout.setText(tFont, "STEMS:" + tStemNumber);
         tFont.draw(tBatch, tLayout, 0, tViewport.getScreenHeight());
         tBatch.end();
     }
-
 
 
 }

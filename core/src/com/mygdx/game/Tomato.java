@@ -16,11 +16,12 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.run;
 
+
 public class Tomato extends Actor {
     TextureRegion[] animationFrames;
     TextureRegion tmpFrames[][] = TextureRegion.split(new Texture(Gdx.files.internal("tomatosheet.png")),64,64);
     Animation<TextureRegion> animation;
-    private float animationTime, explosionAnimationSpeed,jitterSpeed, tomatoWidth;
+    private float animationTime, explosionAnimationSpeed,jitterSpeed, tomatoWidth,velX,velY, tileSize;
 
     private int tomatoNumber;
     private boolean rightTomato, alreadyExploded, clicked, actionCompleted;
@@ -28,6 +29,7 @@ public class Tomato extends Actor {
     private ClickListener listener;
     private TextureRegion explosionFrame, tomatoSprite;
     private Viewport globalViewport;
+
     //SequenceAction sequenceAction;
 
 
@@ -39,7 +41,7 @@ public class Tomato extends Actor {
 
 
 
-    public Tomato(int tomatoNumber, boolean rightTomato, Viewport globalViewport, float x, float y)
+    public Tomato(int tomatoNumber, boolean rightTomato, Viewport globalViewport, float x, float y,float velX,float velY, float tileSize)
     {
 
         tomatoWidth = globalViewport.getScreenWidth()/12;
@@ -49,6 +51,9 @@ public class Tomato extends Actor {
 
 
         this.setBounds(x, y,tomatoWidth,tomatoWidth);
+        this.velX = velX;
+        this.velY = velY;
+        this.tileSize = tileSize;
         animationTime = 0;
         explosionAnimationSpeed = 1/15f;
         jitterSpeed = .1f;
@@ -72,7 +77,7 @@ public class Tomato extends Actor {
                 a++;
             }
         }
-        animation = new Animation<TextureRegion>(1f/10f, animationFrames);
+        animation = new Animation<TextureRegion>(explosionAnimationSpeed, animationFrames);
         // intilializing the click listnener to be attached to every tomato object
         listener = new ClickListener()
         {
@@ -90,11 +95,25 @@ public class Tomato extends Actor {
                     alreadyExploded = !alreadyExploded;
                 }
 
+
             }
 
         };
 
         this.addListener(listener);
+    }
+    private void relocate()
+    {
+        if (getX() > globalViewport.getScreenWidth() - tomatoWidth || getX() < 0)
+        {
+            velX = -velX;
+        }
+        if (getY() > globalViewport.getScreenHeight() - 2 * tileSize - tomatoWidth || getY() < 0)
+        {
+            velY = -velY;
+        }
+
+        setPosition(getX() + velX, getY() + velY);
     }
     public void reset()
     {
@@ -102,6 +121,14 @@ public class Tomato extends Actor {
         alreadyExploded = false;
 
     }
+
+    /**
+     * Initializes and returns action sequences for tomato left to right movement.
+     * This movement only occurs when the tomato is not the "exploding tomato".
+     * This left to right movement is named "jitter", hence "getJitter()"
+     * @return A SequencedAction containing actions for the left to right movement or "jitter" for a tomato object.
+     *
+     */
     private SequenceAction getJitter()
     {
 
@@ -145,6 +172,8 @@ public class Tomato extends Actor {
     public void act(float delta) {
         super.act(delta); //need to call super so I don't lose the parent class's abilities (act sequencing, etc)
         if (clicked) animationTime += delta;
+        relocate();
+
     }
 
     @Override
@@ -154,11 +183,22 @@ public class Tomato extends Actor {
             //if this tomato is the "right" (exploding) tomato...
             explosionFrame = animation.getKeyFrame(animationTime);
             batch.draw(explosionFrame,getX(),getY(), tomatoWidth,tomatoWidth);
+
         }
         else
         {
             batch.draw(tomatoSprite,getX(),getY(),tomatoWidth,tomatoWidth);
         }
 
+    }
+
+    /**
+     * Returns a boolean determining whether the exploding animation has completed.
+     * This only returns true if the tomato is an "exploding tomato", so all other "non exploding" tomatoes will be ignored.
+     * @return  whether exploding animation has completed
+     */
+    public boolean isAlreadyExploded()
+    {
+        return animationTime > explosionAnimationSpeed * animationFrames.length && rightTomato;
     }
 }
