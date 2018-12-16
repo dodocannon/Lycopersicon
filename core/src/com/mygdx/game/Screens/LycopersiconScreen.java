@@ -43,38 +43,49 @@ public class LycopersiconScreen implements Screen{
 
         tBatch = new SpriteBatch();
 
-        tTileSize = tViewport.getScreenWidth()/10;
-        System.out.println(tViewport.getScreenWidth());
-        tWorld = new TomatoWorld(tViewport, tBatch, tTileSize); // 800 x 480 world
+
+       // System.out.println(tViewport.getScreenWidth());
 
         tStemNumber = MathUtils.random(4);
 
-        tGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Cabin_Sketch/CabinSketch-Regular.ttf"));
-        tParams = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        tLayout = new GlyphLayout();
 
-        tParams.size = (int) (tViewport.getScreenHeight()/7);
-        tParams.color = Color.BLACK;
-        tFont = tGenerator.generateFont(tParams);
-
-        tCluster = new TomatoCluster(5,4,tStemNumber, tViewport,true);
-        tCluster.setDebug(true);
-        tCluster.setPosition(0, 0);
-        tCluster.fill();
 
        // this works fine...  tBackground= new Background(tViewport,tViewport.getScreenWidth()/10);
 
-       // tBackground= new Background(tViewport,tTileSize); //this must be buggy
-       // tWorld.addActor(tBackground);
-        System.out.println(tTileSize);
-        tWorld.addActor(tCluster);
+
+       // System.out.println(tTileSize);
 
         Gdx.input.setInputProcessor(tWorld);
     }
 
     @Override
     public void show() {
+        tWorld = new TomatoWorld(tViewport, tBatch, tTileSize); // 800 x 480 world
+
         System.out.println(tViewport.getScreenWidth());
+        tTileSize = tViewport.getScreenWidth()/10;
+
+        tGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Cabin_Sketch/CabinSketch-Regular.ttf"));
+        tParams = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        tLayout = new GlyphLayout();
+
+        tParams.size = (int) (tViewport.getScreenHeight()/7);
+
+        tParams.color = Color.BLACK;
+        tFont = tGenerator.generateFont(tParams);
+
+        tBackground= new Background(tViewport,tTileSize); //this must be buggy
+
+        System.out.println(tTileSize);
+
+        tCluster = new TomatoCluster(5,4,tStemNumber, tViewport,true, tTileSize);
+        tCluster.setDebug(true);
+        tCluster.setPosition(0, 0);
+        tCluster.fill();
+
+        tWorld.addActor(tBackground);
+        tWorld.addActor(tCluster);
+
 
     }
 

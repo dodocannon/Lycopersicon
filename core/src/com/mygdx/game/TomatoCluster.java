@@ -9,13 +9,13 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 
 public class TomatoCluster extends Group {
-    private float tomatoX, tomatoY,screenW, screenH, tomatoSize, offset ;
+    private float tomatoX, tomatoY,screenW, screenH, tomatoSize, offset,tileSize ;
     private int appleTarget;
 
     private Viewport globalViewport;
     private boolean random;
 
-    public TomatoCluster(float tomatoX, float tomatoY, int appleTarget, Viewport globalViewport, boolean random)
+    public TomatoCluster(float tomatoX, float tomatoY, int appleTarget, Viewport globalViewport, boolean random, float tileSize)
     {
 
         this.globalViewport = globalViewport;
@@ -23,8 +23,10 @@ public class TomatoCluster extends Group {
         this.tomatoY = tomatoY;
         this.tomatoX = tomatoX;
         this.random = random;
+        this.tileSize = tileSize;
         screenW = globalViewport.getScreenWidth();
         screenH = globalViewport.getScreenHeight();
+        System.out.println("Heihgt:" + screenH);
         tomatoSize = screenW/12;
 
         offset = (screenW - (tomatoX * tomatoSize))/(tomatoX+1);
@@ -58,7 +60,8 @@ public class TomatoCluster extends Group {
             for (int i = 0; i < tomatoX * tomatoY; i++)
             {
                 rand = MathUtils.random(4);
-                Tomato curr = new Tomato(rand, rand == appleTarget, globalViewport, MathUtils.random(screenW), MathUtils.random(screenH));
+                //System.out.println(tileSize);
+                Tomato curr = new Tomato(rand, rand == appleTarget, globalViewport, MathUtils.random(screenW - screenW/12), MathUtils.random(screenH - 2 * tileSize - screenW/12));
                 addActor(curr);
             }
         }
