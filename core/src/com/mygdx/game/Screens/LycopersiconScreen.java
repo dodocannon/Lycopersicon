@@ -118,7 +118,10 @@ public class LycopersiconScreen implements Screen {
 
     @Override
     public void dispose() {
+
+
         tBatch.dispose();
+        tCluster.dispose();
     }
 
     private void drawHUD() {

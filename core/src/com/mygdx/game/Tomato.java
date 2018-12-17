@@ -2,6 +2,7 @@ package com.mygdx.game;
 
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -25,6 +26,8 @@ public class Tomato extends Actor {
 
     private int tomatoNumber;
     private boolean rightTomato, alreadyExploded, clicked, actionCompleted;
+
+    private Sound tShotSound;
 
     private ClickListener listener;
     private TextureRegion explosionFrame, tomatoSprite;
@@ -62,6 +65,7 @@ public class Tomato extends Actor {
         actionCompleted = true;
 
         tomatoSprite = new TextureRegion(new Texture(Gdx.files.internal("tomato"+tomatoNumber+".png")));
+        tShotSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/autism.mp3"));
         init();
     }
     private void init()
@@ -93,6 +97,10 @@ public class Tomato extends Actor {
                 if (!alreadyExploded) {
                     clicked = true;
                     alreadyExploded = !alreadyExploded;
+
+                }
+                if (rightTomato) {
+                    tShotSound.play();
                 }
 
 
@@ -167,7 +175,9 @@ public class Tomato extends Actor {
     }
 
 
-
+    public void dispose() {
+        tShotSound.dispose();
+    }
     @Override
     public void act(float delta) {
         super.act(delta); //need to call super so I don't lose the parent class's abilities (act sequencing, etc)

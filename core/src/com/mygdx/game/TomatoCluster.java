@@ -91,6 +91,12 @@ public class TomatoCluster extends Group {
 
     }
 
+    public void dispose() {
+        for (Actor t : getChildren()) {
+            t = (Tomato) t;
+            ((Tomato) t).dispose();
+        }
+    }
     @Override
     public void act(float delta) {
         super.act(delta);
@@ -99,6 +105,7 @@ public class TomatoCluster extends Group {
             t = (Tomato) t;
             if (((Tomato) t).isAlreadyExploded())
             {
+
                 removeActor(t);
                 System.out.println("removed");
             }
