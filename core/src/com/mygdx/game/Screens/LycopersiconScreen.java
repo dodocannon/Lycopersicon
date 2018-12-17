@@ -16,6 +16,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.Background;
 import com.mygdx.game.Lycopersicon;
+import com.mygdx.game.LycopersiconTitleUI;
+import com.mygdx.game.TapPrompt;
 import com.mygdx.game.TomatoCluster;
 import com.mygdx.game.TomatoWorld;
 
@@ -31,6 +33,7 @@ public class LycopersiconScreen implements Screen {
     private GlyphLayout tLayout;
 
     private TomatoWorld tWorld;
+    private LycopersiconTitleUI tTitleUI;
     private TomatoCluster tCluster;
     private Background tBackground;
 
@@ -51,12 +54,15 @@ public class LycopersiconScreen implements Screen {
 
     @Override
     public void show() {
+
+
         tWorld = new TomatoWorld(tViewport, tBatch, tTileSize); // 800 x 480 world
 
-        System.out.println(tViewport.getScreenWidth());
-        tTileSize = tViewport.getScreenWidth() / 10;
+        tTitleUI = new LycopersiconTitleUI(tViewport);
+
 
         tGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Cabin_Sketch/CabinSketch-Regular.ttf"));
+
         tParams = new FreeTypeFontGenerator.FreeTypeFontParameter();
         tLayout = new GlyphLayout();
 
@@ -67,15 +73,7 @@ public class LycopersiconScreen implements Screen {
 
         tBackground = new Background(tViewport, tTileSize); //this must be buggy
 
-        System.out.println(tTileSize);
 
-        tCluster = new TomatoCluster(5, 4,tViewport.getScreenWidth()/500, tStemNumber, tViewport, true, tTileSize);
-        tCluster.setDebug(true);
-        tCluster.setPosition(0, 0);
-        tCluster.fill();
-
-        tWorld.addActor(tBackground);
-        tWorld.addActor(tCluster);
         Gdx.input.setInputProcessor(tWorld);
 
 
@@ -86,9 +84,11 @@ public class LycopersiconScreen implements Screen {
 
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        tWorld.draw();
-        tWorld.act(delta);
-        drawHUD();
+        tTitleUI.draw();
+        tTitleUI.act(delta);
+       /* tWorld.draw();
+        tWorld.act(delta);*/
+        //  drawHUD();
     }
 
     private Drawable textureToDrawable(Texture t) // I made this method to convert textures to drawables for ease of modification in the table
@@ -99,6 +99,16 @@ public class LycopersiconScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         tViewport.update(width, height);
+        tTitleUI.addActor(new TapPrompt(tViewport));
+
+        tTileSize = tViewport.getScreenWidth() / 10;
+        tCluster = new TomatoCluster(5, 4, tViewport.getScreenWidth() / 500, tStemNumber, tViewport, true, tTileSize);
+
+        tCluster.setPosition(0, 0);
+        tCluster.fill();
+
+        tWorld.addActor(tBackground);
+        tWorld.addActor(tCluster);
     }
 
     @Override
