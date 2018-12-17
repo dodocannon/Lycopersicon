@@ -36,6 +36,7 @@ public class LycopersiconScreen implements Screen {
     private LycopersiconTitleUI tTitleUI;
     private TomatoCluster tCluster;
     private Background tBackground;
+    private TapPrompt tTapPrompt;
 
     private int tStemNumber;
     private float tTileSize;
@@ -48,6 +49,7 @@ public class LycopersiconScreen implements Screen {
 
 
         tStemNumber = MathUtils.random(4);
+        tTapPrompt = new TapPrompt(tViewport);
 
 
     }
@@ -56,7 +58,7 @@ public class LycopersiconScreen implements Screen {
     public void show() {
 
 
-        tWorld = new TomatoWorld(tViewport, tBatch, tTileSize); // 800 x 480 world
+        tWorld = new TomatoWorld(tViewport, tBatch); // 800 x 480 world
 
         tTitleUI = new LycopersiconTitleUI(tViewport);
 
@@ -71,7 +73,7 @@ public class LycopersiconScreen implements Screen {
         tParams.color = Color.BLACK;
         tFont = tGenerator.generateFont(tParams);
 
-        tBackground = new Background(tViewport, tTileSize); //this must be buggy
+        //this must be buggy
 
 
         Gdx.input.setInputProcessor(tWorld);
@@ -99,13 +101,19 @@ public class LycopersiconScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         tViewport.update(width, height);
-        tTitleUI.addActor(new TapPrompt(tViewport));
-
         tTileSize = tViewport.getScreenWidth() / 10;
+
+        tTapPrompt.init();
+
+
+        tTitleUI.addActor(tTapPrompt);
+
         tCluster = new TomatoCluster(5, 4, tViewport.getScreenWidth() / 500, tStemNumber, tViewport, true, tTileSize);
 
         tCluster.setPosition(0, 0);
         tCluster.fill();
+
+        tBackground = new Background(tViewport, tTileSize);
 
         tWorld.addActor(tBackground);
         tWorld.addActor(tCluster);

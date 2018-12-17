@@ -6,13 +6,10 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class TomatoWorld extends Stage {
     private float tileSize;
-    public TomatoWorld(Viewport tViewport, SpriteBatch tSpriteBatch, float tileSize)
+
+    public TomatoWorld(Viewport tViewport, SpriteBatch tSpriteBatch)
     {
         super(tViewport, tSpriteBatch);
-        this.tileSize = tileSize;
     }
-    public float getTileSize()
-    {
-        return tileSize;
-    }
+
 }

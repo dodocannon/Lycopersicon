@@ -71,7 +71,8 @@ public class TomatoCluster extends Group {
         }
 
     }
-    public void move()
+
+    public void init()
     {
 
     }

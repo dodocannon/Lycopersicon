@@ -23,15 +23,18 @@ public class TapPrompt extends Actor {
     public TapPrompt(Viewport tViewport) {
 
         this.tViewport = tViewport;
-        init();
+
 
 
     }
 
     public void init() {
-        System.out.println("AAAA: " + tViewport.getScreenWidth());
-        setWidth(tViewport.getScreenWidth() * .7f);
-        setHeight(tViewport.getScreenHeight() * .3f);
+
+        this.setWidth(7.429f * tViewport.getScreenWidth() * .13f);
+        this.setHeight(1 * tViewport.getScreenWidth() * .13f);
+        this.clearActions();
+        this.setColor(getColor().r, getColor().g, getColor().b, 1);
+
         addAction(Actions.forever(Actions.sequence(Actions.fadeOut(1f), Actions.fadeIn(1f))));
 
     }
@@ -44,8 +47,8 @@ public class TapPrompt extends Actor {
     @Override
     public void draw(Batch batch, float parentAlpha) {
         batch.setColor(getColor().r, getColor().g, getColor().b, getColor().a * parentAlpha);
-        batch.draw(new Texture(Gdx.files.internal("tap.png")), 0, 0, getWidth(), getHeight());
-        System.out.println(getWidth());
+        batch.draw(new Texture(Gdx.files.internal("tap.png")), tViewport.getScreenWidth() / 2 - getWidth() / 2, tViewport.getScreenHeight() / 2 - getHeight() / 2, getWidth(), getHeight());
+
     }
 
 }
