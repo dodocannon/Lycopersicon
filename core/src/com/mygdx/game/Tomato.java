@@ -189,6 +189,7 @@ public class Tomato extends Actor {
     @Override
     public void draw(Batch batch, float parentAlpha) {
         super.draw(batch, parentAlpha);
+        batch.setColor(getColor().r, getColor().g, getColor().b, getColor().a * parentAlpha);
         if (clicked && rightTomato) {
             //if this tomato is the "right" (exploding) tomato...
             explosionFrame = animation.getKeyFrame(animationTime);

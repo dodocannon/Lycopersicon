@@ -27,7 +27,11 @@ import com.mygdx.game.TomatoWorld;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
-
+/**
+ * Fade out mechanisms,
+ * Fade in, faster movement, rotating apples
+ * Teleportation(?)
+ */
 
 public class LycopersiconScreen implements Screen {
     public final Lycopersicon game;
@@ -126,18 +130,9 @@ public class LycopersiconScreen implements Screen {
 
         tTitleUI.addActor(tTapPrompt);
 
-        tCluster = new TomatoCluster(5, 4, tViewport.getScreenWidth() / 500, tStemNumber, tViewport, true, tTileSize);
-
-        tCluster.setPosition(0, 0);
-        tCluster.fill();
-
-        tBackground = new Background(tViewport, tTileSize);
-
 
         setUpTitleUIListener();
 
-        tWorld.addActor(tBackground);
-        tWorld.addActor(tCluster);
     }
 
     @Override
@@ -182,6 +177,7 @@ public class LycopersiconScreen implements Screen {
                     @Override
                     public void run() {
                         Gdx.input.setInputProcessor(tWorld);
+                        setUpWorld();
                     }
                 })));
                 return true;
@@ -189,6 +185,22 @@ public class LycopersiconScreen implements Screen {
         });
     }
 
+    private void setUpWorld() {
+        Gdx.input.setInputProcessor(tWorld);
+        tCluster = new TomatoCluster(5, 4, tViewport.getScreenWidth() / 500, tStemNumber, tViewport, true, tTileSize);
+        tBackground = new Background(tViewport, tTileSize);
+
+        tCluster.setPosition(0, 0);
+        tCluster.fill();
+
+        tCluster.addAction(fadeIn(4f));
+
+        //tBackground.addAction(fadeIn(f));
+
+        tWorld.addActor(tBackground);
+        tWorld.addActor(tCluster);
+
+    }
 
 
 }

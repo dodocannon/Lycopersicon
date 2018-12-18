@@ -1,6 +1,7 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
@@ -27,12 +28,13 @@ public class TomatoCluster extends Group {
         this.random = random;
         this.tileSize = tileSize;
         this.velocity = velocity;
+
         screenW = globalViewport.getScreenWidth();
         screenH = globalViewport.getScreenHeight();
-        System.out.println("Heihgt:" + screenH);
-        tomatoSize = screenW/12;
 
+        tomatoSize = screenW/12;
         offset = (screenW - (tomatoX * tomatoSize))/(tomatoX+1);
+        this.setColor(getColor().r, getColor().g, getColor().b, 0);
 
 
     }
@@ -112,4 +114,6 @@ public class TomatoCluster extends Group {
             }
         }
     }
+
+
 }
