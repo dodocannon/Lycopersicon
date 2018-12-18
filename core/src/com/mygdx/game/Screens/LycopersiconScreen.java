@@ -1,6 +1,7 @@
 package com.mygdx.game.Screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -36,6 +37,8 @@ public class LycopersiconScreen implements Screen {
     private LycopersiconTitleUI tTitleUI;
     private TomatoCluster tCluster;
     private Background tBackground;
+
+
     private TapPrompt tTapPrompt;
 
     private int tStemNumber;
@@ -76,7 +79,7 @@ public class LycopersiconScreen implements Screen {
         //this must be buggy
 
 
-        Gdx.input.setInputProcessor(tWorld);
+        Gdx.input.setInputProcessor(tTitleUI);
 
 
     }
@@ -86,8 +89,10 @@ public class LycopersiconScreen implements Screen {
 
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        tTitleUI.draw();
-        tTitleUI.act(delta);
+        if (Gdx.input.getInputProcessor().equals(tTitleUI)) {
+            tTitleUI.draw();
+            tTitleUI.act(delta);
+        }
        /* tWorld.draw();
         tWorld.act(delta);*/
         //  drawHUD();
@@ -148,6 +153,10 @@ public class LycopersiconScreen implements Screen {
         tFont.draw(tBatch, tLayout, 0, tViewport.getScreenHeight());
         tBatch.end();
     }
+
+    private void setUp() {
+    }
+
 
 
 }
