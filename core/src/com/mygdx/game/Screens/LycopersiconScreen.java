@@ -12,6 +12,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -22,9 +25,12 @@ import com.mygdx.game.TapPrompt;
 import com.mygdx.game.TomatoCluster;
 import com.mygdx.game.TomatoWorld;
 
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
+
+
 
 public class LycopersiconScreen implements Screen {
-    final Lycopersicon game;
+    public final Lycopersicon game;
 
     private ScreenViewport tViewport;
     private SpriteBatch tBatch;
@@ -71,7 +77,7 @@ public class LycopersiconScreen implements Screen {
         tParams = new FreeTypeFontGenerator.FreeTypeFontParameter();
         tLayout = new GlyphLayout();
 
-        tParams.size = (int) (tViewport.getScreenHeight() / 7);
+        tParams.size = (tViewport.getScreenHeight() / 7);
 
         tParams.color = Color.BLACK;
         tFont = tGenerator.generateFont(tParams);
@@ -80,6 +86,7 @@ public class LycopersiconScreen implements Screen {
 
 
         Gdx.input.setInputProcessor(tTitleUI);
+
 
 
     }
@@ -93,6 +100,12 @@ public class LycopersiconScreen implements Screen {
             tTitleUI.draw();
             tTitleUI.act(delta);
         }
+        if (Gdx.input.getInputProcessor().equals(tWorld)) {
+            tWorld.draw();
+            tWorld.act(delta);
+            drawHUD();
+        }
+
        /* tWorld.draw();
         tWorld.act(delta);*/
         //  drawHUD();
@@ -120,6 +133,9 @@ public class LycopersiconScreen implements Screen {
 
         tBackground = new Background(tViewport, tTileSize);
 
+
+        setUpTitleUIListener();
+
         tWorld.addActor(tBackground);
         tWorld.addActor(tCluster);
     }
@@ -144,6 +160,8 @@ public class LycopersiconScreen implements Screen {
 
 
         tBatch.dispose();
+        addAction(Actions.rotateBy(5000000));
+
         tCluster.dispose();
     }
 
@@ -154,7 +172,21 @@ public class LycopersiconScreen implements Screen {
         tBatch.end();
     }
 
-    private void setUp() {
+    private void setUpTitleUIListener() {
+        tTitleUI.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                tTapPrompt.clearActions();
+                tTapPrompt.addAction(sequence(parallel(repeat(7, rotateBy(50, .2f)),
+                        scaleTo(.5f, .5f, 1.4f)), run(new Runnable() {
+                    @Override
+                    public void run() {
+                        Gdx.input.setInputProcessor(tWorld);
+                    }
+                })));
+                return true;
+            }
+        });
     }
 
 
