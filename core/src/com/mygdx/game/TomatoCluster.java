@@ -12,7 +12,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class TomatoCluster extends Group {
     private float tomatoX, tomatoY,screenW, screenH, velocity, tomatoSize, offset,tileSize;
-    private int appleTarget;
+    private int appleTarget, tTargets;
 
 
     private Viewport globalViewport;
@@ -54,6 +54,9 @@ public class TomatoCluster extends Group {
                     }
                     posX += offset;
                     Tomato curr = new Tomato(rand, rand == appleTarget, globalViewport, posX,   k * globalViewport.getScreenWidth() / 12, 0,0,tileSize);
+                    if (curr.isRightTomato()) {
+                        tTargets++;
+                    }
 
                     this.addActor(curr);
                 }
@@ -66,17 +69,23 @@ public class TomatoCluster extends Group {
             for (int i = 0; i < tomatoX * tomatoY; i++)
             {
                 rand = MathUtils.random(4);
-                //System.out.println(tileSize);
                 Tomato curr = new Tomato(rand, rand == appleTarget, globalViewport, MathUtils.random(screenW - screenW/12), MathUtils.random(screenH - 2 * tileSize - screenW/12), getRandomVelocity(),getRandomVelocity(),tileSize);
+                if (curr.isRightTomato()) {
+                    tTargets++;
+                }
                 addActor(curr);
             }
         }
 
     }
 
-    public void init()
+    public void reset()
     {
+        tTargets = 0;
+    }
 
+    public int remainingTargets() {
+        return tTargets;
     }
 
     /**
@@ -94,6 +103,14 @@ public class TomatoCluster extends Group {
 
     }
 
+    public void scaleDownVelocity(float scale) {
+        for (Actor t : getChildren()) {
+            t = (Tomato) t;
+            ((Tomato) t).setVelX(((Tomato) t).getVelX() * scale);
+            ((Tomato) t).setVelY(((Tomato) t).getVelY() * scale);
+        }
+    }
+
     public void dispose() {
         for (Actor t : getChildren()) {
             t = (Tomato) t;
@@ -108,7 +125,7 @@ public class TomatoCluster extends Group {
             t = (Tomato) t;
             if (((Tomato) t).isAlreadyExploded())
             {
-
+                tTargets--;
                 removeActor(t);
                 System.out.println("removed");
             }

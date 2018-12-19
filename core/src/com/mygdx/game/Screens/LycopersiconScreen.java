@@ -1,6 +1,7 @@
 package com.mygdx.game.Screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -11,7 +12,9 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
@@ -51,7 +54,7 @@ public class LycopersiconScreen implements Screen {
 
     private TapPrompt tTapPrompt;
 
-    private int tStemNumber;
+    private int tStemNumber, tTomatoRemaining;
     private float tTileSize;
 
     public LycopersiconScreen(Lycopersicon game) {
@@ -61,7 +64,6 @@ public class LycopersiconScreen implements Screen {
         tBatch = new SpriteBatch();
 
 
-        tStemNumber = MathUtils.random(4);
         tTapPrompt = new TapPrompt(tViewport);
 
 
@@ -81,7 +83,7 @@ public class LycopersiconScreen implements Screen {
         tParams = new FreeTypeFontGenerator.FreeTypeFontParameter();
         tLayout = new GlyphLayout();
 
-        tParams.size = (tViewport.getScreenHeight() / 7);
+        tParams.size = (tViewport.getScreenHeight() / 9);
 
         tParams.color = Color.BLACK;
         tFont = tGenerator.generateFont(tParams);
@@ -90,6 +92,7 @@ public class LycopersiconScreen implements Screen {
 
 
         Gdx.input.setInputProcessor(tTitleUI);
+
 
 
 
@@ -105,14 +108,13 @@ public class LycopersiconScreen implements Screen {
             tTitleUI.act(delta);
         }
         if (Gdx.input.getInputProcessor().equals(tWorld)) {
+
             tWorld.draw();
             tWorld.act(delta);
             drawHUD();
         }
 
-       /* tWorld.draw();
-        tWorld.act(delta);*/
-        //  drawHUD();
+
     }
 
     private Drawable textureToDrawable(Texture t) // I made this method to convert textures to drawables for ease of modification in the table
@@ -163,7 +165,9 @@ public class LycopersiconScreen implements Screen {
     private void drawHUD() {
         tBatch.begin();
         tLayout.setText(tFont, "STEMS:" + tStemNumber);
-        tFont.draw(tBatch, tLayout, 0, tViewport.getScreenHeight());
+        tFont.draw(tBatch, tLayout, 0, tViewport.getScreenHeight() - tViewport.getScreenHeight() / 12);
+        tLayout.setText(tFont, "Lycos Left: " + tCluster.remainingTargets());
+        tFont.draw(tBatch, tLayout, tViewport.getScreenWidth() / 2, tViewport.getScreenHeight() * 11 / 12);
         tBatch.end();
     }
 
@@ -185,15 +189,34 @@ public class LycopersiconScreen implements Screen {
         });
     }
 
+    private void setUpWorldListener() {
+        tWorld.addListener(new InputListener() {
+            @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+
+                switch (keycode) {
+                    case Input.Keys.M:
+                        tCluster.scaleDownVelocity(.7f);
+                        break;
+
+                }
+                return true;
+            }
+        });
+    }
+
     private void setUpWorld() {
         Gdx.input.setInputProcessor(tWorld);
-        tCluster = new TomatoCluster(5, 4, tViewport.getScreenWidth() / 500, tStemNumber, tViewport, true, tTileSize);
+        setUpWorldListener();
+        tStemNumber = MathUtils.random(4);
+
+        tCluster = new TomatoCluster(5, 4, tViewport.getScreenWidth() / 50, tStemNumber, tViewport, true, tTileSize);
         tBackground = new Background(tViewport, tTileSize);
 
         tCluster.setPosition(0, 0);
         tCluster.fill();
 
-        tCluster.addAction(fadeIn(4f));
+        tCluster.addAction(sequence(delay(1f), fadeIn(4f)));
 
         //tBackground.addAction(fadeIn(f));
 

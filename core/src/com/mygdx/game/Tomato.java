@@ -212,4 +212,24 @@ public class Tomato extends Actor {
     {
         return animationTime > explosionAnimationSpeed * animationFrames.length && rightTomato;
     }
+
+    public boolean isRightTomato() {
+        return rightTomato;
+    }
+
+    public float getVelX() {
+        return velX;
+    }
+
+    public float getVelY() {
+        return velY;
+    }
+
+    public void setVelX(float x) {
+        velX = x;
+    }
+
+    public void setVelY(float y) {
+        velY = y;
+    }
 }
