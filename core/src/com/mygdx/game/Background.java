@@ -35,7 +35,7 @@ public class Background extends Group {
                 addActor(grassBackground);
             }
         }
-        for (int i  = 1 ; i <= 2; i++)
+        for (int i = 1; i <= 1; i++)
         {
             for (int k = 0; k < tViewport.getScreenWidth(); k+=tileSize)
             {

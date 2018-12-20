@@ -38,8 +38,13 @@ public class TomatoCluster extends Group {
 
 
     }
-    public void fill()
-    {
+
+    /**
+     * Fills the group with Tomato Actors: sets their position
+     * Fills the group with explosive/non explosive Tomato Actors
+     * Updates tTarget counter
+     */
+    public void fill() {
 
         int rand;
         //fills apples in systemic manner
@@ -48,8 +53,7 @@ public class TomatoCluster extends Group {
                 float posX = 0;
                 for (int i = 0; i < tomatoX; i++) {
                     rand = MathUtils.random(4);
-                    if (i!=0)
-                    {
+                    if (i!=0) {
                         posX+= tomatoSize;
                     }
                     posX += offset;
@@ -63,17 +67,18 @@ public class TomatoCluster extends Group {
 
 
             }
-        }
-        else
-        {
-            for (int i = 0; i < tomatoX * tomatoY; i++)
-            {
+        } else {
+            for (int i = 0; i < tomatoX * tomatoY; i++) {
                 rand = MathUtils.random(4);
                 Tomato curr = new Tomato(rand, rand == appleTarget, globalViewport, MathUtils.random(screenW - screenW/12), MathUtils.random(screenH - 2 * tileSize - screenW/12), getRandomVelocity(),getRandomVelocity(),tileSize);
                 if (curr.isRightTomato()) {
                     tTargets++;
+                    curr.startCountdown();
+
                 }
+
                 addActor(curr);
+
             }
         }
 
@@ -105,15 +110,22 @@ public class TomatoCluster extends Group {
 
     public void scaleDownVelocity(float scale) {
         for (Actor t : getChildren()) {
-            t = (Tomato) t;
             ((Tomato) t).setVelX(((Tomato) t).getVelX() * scale);
             ((Tomato) t).setVelY(((Tomato) t).getVelY() * scale);
         }
     }
 
+    /**
+     * Future method for implementation that starts countdown on tomato via method on group
+     */
+    public void startCountdown() {
+        for (Actor t : getChildren()) {
+            ((Tomato) t).startCountdown();
+        }
+    }
+
     public void dispose() {
         for (Actor t : getChildren()) {
-            t = (Tomato) t;
             ((Tomato) t).dispose();
         }
     }
@@ -122,7 +134,6 @@ public class TomatoCluster extends Group {
         super.act(delta);
         for (Actor t : getChildren())
         {
-            t = (Tomato) t;
             if (((Tomato) t).isAlreadyExploded())
             {
                 tTargets--;

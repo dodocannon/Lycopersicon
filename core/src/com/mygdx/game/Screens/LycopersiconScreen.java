@@ -218,7 +218,6 @@ public class LycopersiconScreen implements Screen {
 
         tCluster.addAction(sequence(delay(1f), fadeIn(4f)));
 
-        //tBackground.addAction(fadeIn(f));
 
         tWorld.addActor(tBackground);
         tWorld.addActor(tCluster);
