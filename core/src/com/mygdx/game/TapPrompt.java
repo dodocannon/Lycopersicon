@@ -24,13 +24,11 @@ public class TapPrompt extends Actor {
     }
 
     public void init() {
-        tTexture = new Texture(Gdx.files.internal("tap.png"));
+        tTexture = new Texture(Gdx.files.internal("tapwhite.png"));
         this.setWidth(7.429f * tViewport.getScreenWidth() * .13f);
         this.setHeight(1 * tViewport.getScreenWidth() * .13f);
         this.clearActions();
-        this.setColor(getColor().r, getColor().g, getColor().b, 1);
         this.setOrigin(getWidth() / 2, getHeight() / 2);
-        //this.setOrigin(Align.center);
         addAction(Actions.forever(Actions.sequence(Actions.fadeOut(1f), Actions.fadeIn(1f))));
 
 

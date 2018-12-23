@@ -18,15 +18,18 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.Background;
+import com.mygdx.game.GameOverUI;
 import com.mygdx.game.Lycopersicon;
 import com.mygdx.game.LycopersiconTitleUI;
 import com.mygdx.game.TapPrompt;
 import com.mygdx.game.TomatoCluster;
 import com.mygdx.game.TomatoWorld;
+import com.mygdx.game.Twinkle;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
@@ -48,6 +51,7 @@ public class LycopersiconScreen implements Screen {
 
     private TomatoWorld tWorld;
     private LycopersiconTitleUI tTitleUI;
+    private GameOverUI tGameOverUI;
     private TomatoCluster tCluster;
     private Background tBackground;
 
@@ -56,6 +60,8 @@ public class LycopersiconScreen implements Screen {
 
     private int tStemNumber, tTomatoRemaining;
     private float tTileSize;
+
+    private Image tStars;
 
     public LycopersiconScreen(Lycopersicon game) {
         this.game = game;
@@ -76,6 +82,7 @@ public class LycopersiconScreen implements Screen {
         tWorld = new TomatoWorld(tViewport, tBatch); // 800 x 480 world
 
         tTitleUI = new LycopersiconTitleUI(tViewport);
+        tGameOverUI = new GameOverUI(tViewport);
 
 
         tGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Cabin_Sketch/CabinSketch-Regular.ttf"));
@@ -85,10 +92,9 @@ public class LycopersiconScreen implements Screen {
 
         tParams.size = (tViewport.getScreenHeight() / 9);
 
-        tParams.color = Color.BLACK;
+        tParams.color = Color.WHITE;
         tFont = tGenerator.generateFont(tParams);
 
-        //this must be buggy
 
 
         Gdx.input.setInputProcessor(tTitleUI);
@@ -101,7 +107,7 @@ public class LycopersiconScreen implements Screen {
     @Override
     public void render(float delta) {
 
-        Gdx.gl.glClearColor(1, 1, 1, 1);
+        Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         if (Gdx.input.getInputProcessor().equals(tTitleUI)) {
             tTitleUI.draw();
@@ -132,8 +138,9 @@ public class LycopersiconScreen implements Screen {
 
         tTitleUI.addActor(tTapPrompt);
 
-
+        setUpTitle();
         setUpTitleUIListener();
+
 
     }
 
@@ -221,6 +228,20 @@ public class LycopersiconScreen implements Screen {
 
         tWorld.addActor(tBackground);
         tWorld.addActor(tCluster);
+
+    }
+    private void setUpTitle()
+    {
+
+        for (int i = 0; i < 50; i++)
+        {
+            Twinkle t = new Twinkle(tViewport);
+
+            tTitleUI.addActor(t);
+        }
+    }
+    private void nextLevel()
+    {
 
     }
 

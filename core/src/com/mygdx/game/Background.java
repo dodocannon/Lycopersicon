@@ -29,7 +29,7 @@ public class Background extends Group {
         {
             for (int j = 0; j < tViewport.getScreenWidth(); j+= tileSize)
             {
-                grassBackground = new Image(new Texture(Gdx.files.internal("grass1.jpg")));
+                grassBackground = new Image(new Texture(Gdx.files.internal("grass.png")));
                 grassBackground.setSize(tileSize,tileSize);
                 grassBackground.setPosition(j,i);
                 addActor(grassBackground);
