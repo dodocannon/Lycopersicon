@@ -22,7 +22,9 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.run;
 
-
+/**
+ * COMMENTED OUT BATCH SETCOLOR!!!
+ */
 public class Tomato extends Actor {
     TextureRegion[] animationFrames;
     TextureRegion tmpFrames[][] = TextureRegion.split(new Texture(Gdx.files.internal("tomatosheet.png")),64,64);
@@ -196,7 +198,7 @@ public class Tomato extends Actor {
     @Override
     public void draw(Batch batch, float parentAlpha) {
         super.draw(batch, parentAlpha);
-        batch.setColor(getColor().r, getColor().g, getColor().b, getColor().a * parentAlpha);
+        //batch.setColor(getColor().r, getColor().g, getColor().b, getColor().a * parentAlpha);
         if (clicked && rightTomato) {
             //if this tomato is the "right" (exploding) tomato...
             explosionFrame = animation.getKeyFrame(animationTime);

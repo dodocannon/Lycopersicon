@@ -52,7 +52,7 @@ public class TomatoCluster extends Group {
             for (int k = 0; k < tomatoY; k++) {
                 float posX = 0;
                 for (int i = 0; i < tomatoX; i++) {
-                    rand = MathUtils.random(4);
+                    rand = MathUtils.random(4);                 
                     if (i!=0) {
                         posX+= tomatoSize;
                     }
@@ -73,7 +73,7 @@ public class TomatoCluster extends Group {
                 Tomato curr = new Tomato(rand, rand == appleTarget, globalViewport, MathUtils.random(screenW - screenW/12), MathUtils.random(screenH - 2 * tileSize - screenW/12), getRandomVelocity(),getRandomVelocity(),tileSize);
                 if (curr.isRightTomato()) {
                     tTargets++;
-                    curr.startCountdown();
+                    //curr.startCountdown();
 
                 }
 
@@ -128,6 +128,7 @@ public class TomatoCluster extends Group {
         for (Actor t : getChildren()) {
             ((Tomato) t).dispose();
         }
+
     }
     @Override
     public void act(float delta) {

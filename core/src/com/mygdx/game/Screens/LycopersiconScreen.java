@@ -37,6 +37,22 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
  * Fade out mechanisms,
  * Fade in, faster movement, rotating apples
  * Teleportation(?)
+ * How am I going to implement nextlevel?
+ *
+ *  LEVEL IMPLEMENTATION PSEUDOCODE
+ *  if (remaining lycos == 0)
+ *  {
+ *       run timer.
+ *       remove all actors (including cluster
+ *       remove the fonts stuff
+ *       display level number
+ *       screen fade out?
+ *       add new cluster
+ *
+ *  }
+ *
+ *  bonuslevel score multiplier
+ *
  */
 
 public class LycopersiconScreen implements Screen {
@@ -58,10 +74,12 @@ public class LycopersiconScreen implements Screen {
 
     private TapPrompt tTapPrompt;
 
-    private int tStemNumber, tTomatoRemaining;
+    private int tStemNumber, levelNumber;
     private float tTileSize;
 
     private Image tStars;
+
+    private boolean test = false;
 
     public LycopersiconScreen(Lycopersicon game) {
         this.game = game;
@@ -118,6 +136,11 @@ public class LycopersiconScreen implements Screen {
             tWorld.draw();
             tWorld.act(delta);
             drawHUD();
+            if (test == false) {
+                System.out.println("EEE");
+                nextLevel();
+                test = true;
+            }
         }
 
 
@@ -187,7 +210,7 @@ public class LycopersiconScreen implements Screen {
                         scaleTo(.5f, .5f, 1.4f)), run(new Runnable() {
                     @Override
                     public void run() {
-                        Gdx.input.setInputProcessor(tWorld);
+                        // Gdx.input.setInputProcessor(tWorld);
                         setUpWorld();
                     }
                 })));
@@ -213,7 +236,7 @@ public class LycopersiconScreen implements Screen {
     }
 
     private void setUpWorld() {
-        Gdx.input.setInputProcessor(tWorld);
+
         setUpWorldListener();
         tStemNumber = MathUtils.random(4);
 
@@ -228,6 +251,8 @@ public class LycopersiconScreen implements Screen {
 
         tWorld.addActor(tBackground);
         tWorld.addActor(tCluster);
+        System.out.println("AAAA");
+        Gdx.input.setInputProcessor(tWorld);
 
     }
     private void setUpTitle()
@@ -242,7 +267,16 @@ public class LycopersiconScreen implements Screen {
     }
     private void nextLevel()
     {
+        tWorld.getActors().removeValue(tCluster, true);
+        System.out.println(tViewport.getScreenWidth());
+        System.out.println(tTileSize);
+        TomatoCluster a = new TomatoCluster(1, 5, 2, tStemNumber, tViewport, true, tTileSize);
+        a.setPosition(0, 0);
+        a.fill();
+        tWorld.addActor(a);
+        System.out.println(tWorld.getActors());
 
+        //tWorld.add
     }
 
 
