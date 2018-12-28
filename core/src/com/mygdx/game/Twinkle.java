@@ -11,26 +11,23 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 public class Twinkle extends Actor {
     private Viewport tViewport;
     private Texture tTwinkle;
-    private boolean starstreak;
 
     /**
      * Constructor for twinkle
      * boolean starstreak determines if it a rainbow pixel streaking across the screen
      *
      * @param tViewport
-     * @param starstreak
+     * @param
      */
-    public Twinkle(Viewport tViewport, boolean starstreak) {
-        this.starstreak = starstreak;
+    public Twinkle(Viewport tViewport, float boundX, float boundY) {
+
         this.tViewport = tViewport;
         tTwinkle = new Texture(Gdx.files.internal("smallStar.png"));
-        if (!starstreak) {
-            addAction(Actions.forever(Actions.sequence(Actions.delay(MathUtils.random(2f)), Actions.fadeOut(1f), Actions.delay(MathUtils.random(1f)), Actions.fadeIn(1f))));
-            setX(MathUtils.random(tViewport.getScreenWidth()));
-            setY(MathUtils.random(tViewport.getScreenHeight()));
-        } else {
-            setColor((float) Math.random(), (float) Math.random(), (float) Math.random(), 1);
-        }
+
+        addAction(Actions.forever(Actions.sequence(Actions.delay(MathUtils.random(2f)), Actions.fadeOut(1f), Actions.delay(MathUtils.random(1f)), Actions.fadeIn(1f))));
+        setX(MathUtils.random(boundX));
+        setY(MathUtils.random(boundY));
+
 
 
     }

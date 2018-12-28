@@ -131,7 +131,7 @@ public class LycopersiconScreen implements Screen {
 
 
         tNextLevel.setSize(16 * tViewport.getScreenHeight() / 20, 9 * tViewport.getScreenHeight() / 20);
-        tNextLevel.setPosition(-tNextLevel.getWidth(), tViewport.getScreenHeight() / 2);
+        tNextLevel.setPosition(-tNextLevel.getWidth(), tViewport.getScreenHeight() / 2 - tNextLevel.getHeight());
         Gdx.input.setInputProcessor(tTitleUI);
 
 
@@ -279,8 +279,9 @@ public class LycopersiconScreen implements Screen {
         setUpWorldListener();
         tStemNumber = MathUtils.random(4);
 
-        tCluster = new TomatoCluster(1, tLevel * 3, tLevel * 10, tStemNumber, tViewport, true, tTileSize);
+        tCluster = new TomatoCluster(1, tLevel, tLevel, tStemNumber, tViewport, true, tTileSize);
         tBackground = new Background(tViewport, tTileSize);
+        tBackground.initFarm();
 
         // tCluster.setPosition(0, 0);
         tCluster.fill();
@@ -292,8 +293,6 @@ public class LycopersiconScreen implements Screen {
 
         tWorld.addActor(tCluster);
         tWorld.addActor(tNextLevel);
-        //();
-        //System.out.println("AAAA");
         Gdx.input.setInputProcessor(tWorld);
 
     }
@@ -302,7 +301,7 @@ public class LycopersiconScreen implements Screen {
 
         for (int i = 0; i < 50; i++)
         {
-            Twinkle t = new Twinkle(tViewport, false);
+            Twinkle t = new Twinkle(tViewport, tViewport.getScreenWidth(), tViewport.getScreenHeight());
 
             tTitleUI.addActor(t);
         }
@@ -317,14 +316,18 @@ public class LycopersiconScreen implements Screen {
      * sets tCluster to a more "difficult" cluster
      */
     private void nextLevel() {
-
-        //Gdx.input.setInputProcessor(tNextLevelUI);
+        if (tLevel >= 5) {
+            tBackground.clear();
+            tBackground.initSpace2();
+        }
+        tNextLevel.setPosition(-tNextLevel.getWidth(), tViewport.getScreenHeight() / 2 - tNextLevel.getHeight());
         tWorld.getActors().removeValue(tCluster, true);
-        tCluster = new TomatoCluster(1, tLevel * 3, tLevel * 10, tStemNumber, tViewport, true, tTileSize);
+        tStemNumber = MathUtils.random(4);
+        tCluster = new TomatoCluster(1, tLevel + 2, tLevel + .25f, tStemNumber, tViewport, true, tTileSize);
         tCluster.setPosition(0, 0);
         tCluster.fill();
         tLevel++;
-        tBackground.addAction(Actions.parallel(Actions.fadeOut(5f), Actions.sequence(delay(2f), run(new Runnable() {
+        tBackground.addAction(Actions.parallel(Actions.fadeOut(3f), Actions.sequence(delay(1f), run(new Runnable() {
             @Override
             public void run() {
                 tBackground.clearActions();
@@ -334,28 +337,26 @@ public class LycopersiconScreen implements Screen {
         Timer.schedule(new Timer.Task() {
             @Override
             public void run() {
-                tNextLevel.addAction(Actions.sequence(Actions.moveTo(tViewport.getScreenWidth() / 2 - tNextLevel.getWidth() / 2, tViewport.getScreenHeight() / 2, 1f), delay(1f), Actions.moveTo(tViewport.getScreenWidth(), tViewport.getScreenHeight() / 2, 1f)));
+                tNextLevel.addAction(Actions.sequence(Actions.moveTo(tViewport.getScreenWidth() / 2 - tNextLevel.getWidth() / 2, tViewport.getScreenHeight() / 2 - tNextLevel.getHeight(), 1f), delay(1f), Actions.moveTo(tViewport.getScreenWidth(), tViewport.getScreenHeight() / 2 - tNextLevel.getHeight(), 1f)));
 
             }
-        }, 3, 0, 0);
+        }, 1, 0, 0);
         Timer.schedule(new Timer.Task() {
             @Override
             public void run() {
-                tBackground.addAction(Actions.fadeIn(2f));
+                tBackground.addAction(Actions.fadeIn(1f));
             }
-        }, 5, 0, 0);
+        }, 4, 0, 0);
         Timer.schedule(new Timer.Task() {
             @Override
             public void run() {
 
                 tWorld.addActor(tCluster);
             }
-        }, 7, 0, 0);
+        }, 5, 0, 0);
 
 
-        System.out.println(tWorld.getActors());
 
-        //tWorld.add
 
 
     }

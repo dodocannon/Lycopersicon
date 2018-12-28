@@ -34,7 +34,7 @@ public class TomatoCluster extends Group {
 
         tomatoSize = screenW/12;
         offset = (screenW - (tomatoX * tomatoSize))/(tomatoX+1);
-        this.setColor(getColor().r, getColor().g, getColor().b, 1);
+        //this.setColor(getColor().r, getColor().g, getColor().b, 1);
 
 
     }
