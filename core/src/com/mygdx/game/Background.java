@@ -11,7 +11,7 @@ public class Background extends Group {
     /*
     for ease of setting the background image
      */
-    private Image grassBackground, woodBackground;
+    private Tile grassBackground, woodBackground;
     private Viewport tViewport;
     private float tileSize;
 
@@ -29,7 +29,7 @@ public class Background extends Group {
         {
             for (int j = 0; j < tViewport.getScreenWidth(); j+= tileSize)
             {
-                grassBackground = new Image(new Texture(Gdx.files.internal("grass.png")));
+                grassBackground = new Tile(new Texture(Gdx.files.internal("grass1.jpg")));
                 grassBackground.setSize(tileSize,tileSize);
                 grassBackground.setPosition(j,i);
                 addActor(grassBackground);
@@ -39,7 +39,7 @@ public class Background extends Group {
         {
             for (int k = 0; k < tViewport.getScreenWidth(); k+=tileSize)
             {
-                woodBackground = new Image(new Texture(Gdx.files.internal("wood.jpg")));
+                woodBackground = new Tile(new Texture(Gdx.files.internal("wood.jpg")));
                 woodBackground.setSize(tileSize,tileSize);
                 woodBackground.setPosition(k,tViewport.getScreenHeight()- i*tileSize);
                 addActor(woodBackground);

@@ -18,14 +18,19 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.actions.MoveByAction;
+import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Pool;
+import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.Background;
 import com.mygdx.game.GameOverUI;
 import com.mygdx.game.Lycopersicon;
 import com.mygdx.game.LycopersiconTitleUI;
+import com.mygdx.game.NextLevelUI;
 import com.mygdx.game.TapPrompt;
 import com.mygdx.game.TomatoCluster;
 import com.mygdx.game.TomatoWorld;
@@ -68,27 +73,37 @@ public class LycopersiconScreen implements Screen {
     private TomatoWorld tWorld;
     private LycopersiconTitleUI tTitleUI;
     private GameOverUI tGameOverUI;
+    private NextLevelUI tNextLevelUI;
     private TomatoCluster tCluster;
     private Background tBackground;
 
 
     private TapPrompt tTapPrompt;
+    private Image tNextLevel;
 
-    private int tStemNumber, levelNumber;
+    private int tStemNumber, tLevel;
     private float tTileSize;
 
     private Image tStars;
+    Pool<MoveToAction> actionPool = new Pool<MoveToAction>() { //Action pooling enables action recycling: more memory efficient
+        protected MoveToAction newObject() {
+            return new MoveToAction();
+        }
+    };
 
-    private boolean test = false;
+    //private boolean test = false;
 
     public LycopersiconScreen(Lycopersicon game) {
         this.game = game;
+        tLevel = 1;
         tViewport = new ScreenViewport();
 
         tBatch = new SpriteBatch();
 
 
         tTapPrompt = new TapPrompt(tViewport);
+        tNextLevel = new Image(new Texture(Gdx.files.internal("nextLevel.png")));
+
 
 
     }
@@ -101,6 +116,7 @@ public class LycopersiconScreen implements Screen {
 
         tTitleUI = new LycopersiconTitleUI(tViewport);
         tGameOverUI = new GameOverUI(tViewport);
+        tNextLevelUI = new NextLevelUI(tViewport);
 
 
         tGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Cabin_Sketch/CabinSketch-Regular.ttf"));
@@ -108,15 +124,18 @@ public class LycopersiconScreen implements Screen {
         tParams = new FreeTypeFontGenerator.FreeTypeFontParameter();
         tLayout = new GlyphLayout();
 
-        tParams.size = (tViewport.getScreenHeight() / 9);
+        tParams.size = (tViewport.getScreenHeight() / 20);
 
-        tParams.color = Color.WHITE;
+        tParams.color = Color.BLACK;
         tFont = tGenerator.generateFont(tParams);
 
 
-
+        tNextLevel.setSize(16 * tViewport.getScreenHeight() / 20, 9 * tViewport.getScreenHeight() / 20);
+        tNextLevel.setPosition(-tNextLevel.getWidth(), tViewport.getScreenHeight() / 2);
         Gdx.input.setInputProcessor(tTitleUI);
 
+
+        //System.out.println(16*tViewport.getScreenHeight()/100);
 
 
 
@@ -125,23 +144,33 @@ public class LycopersiconScreen implements Screen {
     @Override
     public void render(float delta) {
 
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
         if (Gdx.input.getInputProcessor().equals(tTitleUI)) {
+            Gdx.gl.glClearColor(0, 0, 0, 1);
+            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
             tTitleUI.draw();
             tTitleUI.act(delta);
         }
         if (Gdx.input.getInputProcessor().equals(tWorld)) {
-
+            Gdx.gl.glClearColor(0, 0, 0, 1);
+            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+            if (tCluster.remainingTargets() == 0) {
+                nextLevel();
+                System.out.println("SSSS");
+            }
             tWorld.draw();
             tWorld.act(delta);
             drawHUD();
-            if (test == false) {
-                System.out.println("EEE");
-                nextLevel();
-                test = true;
-            }
+
         }
+        /*if (Gdx.input.getInputProcessor().equals(tNextLevelUI))
+        {
+            Gdx.gl.glClearColor(MathUtils.random(), MathUtils.random(), MathUtils.random(), 1);
+            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+            tNextLevelUI.act();
+            tNextLevelUI.draw();
+            drawLevel();
+        }*/
 
 
     }
@@ -163,6 +192,7 @@ public class LycopersiconScreen implements Screen {
 
         setUpTitle();
         setUpTitleUIListener();
+        setUpNextLevel();
 
 
     }
@@ -197,7 +227,16 @@ public class LycopersiconScreen implements Screen {
         tLayout.setText(tFont, "STEMS:" + tStemNumber);
         tFont.draw(tBatch, tLayout, 0, tViewport.getScreenHeight() - tViewport.getScreenHeight() / 12);
         tLayout.setText(tFont, "Lycos Left: " + tCluster.remainingTargets());
+        tFont.draw(tBatch, tLayout, tViewport.getScreenWidth() / 1.5f, tViewport.getScreenHeight() * 11 / 12);
+        tLayout.setText(tFont, "Level:" + tLevel);
         tFont.draw(tBatch, tLayout, tViewport.getScreenWidth() / 2, tViewport.getScreenHeight() * 11 / 12);
+        tBatch.end();
+    }
+
+    private void drawLevel() {
+        tBatch.begin();
+        tLayout.setText(tFont, "LEVEL UP TO" + tLevel);
+        tFont.draw(tBatch, tLayout, 0, tViewport.getScreenHeight() - tViewport.getScreenHeight() / 12);
         tBatch.end();
     }
 
@@ -240,18 +279,21 @@ public class LycopersiconScreen implements Screen {
         setUpWorldListener();
         tStemNumber = MathUtils.random(4);
 
-        tCluster = new TomatoCluster(5, 4, tViewport.getScreenWidth() / 50, tStemNumber, tViewport, true, tTileSize);
+        tCluster = new TomatoCluster(1, tLevel * 3, tLevel * 10, tStemNumber, tViewport, true, tTileSize);
         tBackground = new Background(tViewport, tTileSize);
 
-        tCluster.setPosition(0, 0);
+        // tCluster.setPosition(0, 0);
         tCluster.fill();
 
         tCluster.addAction(sequence(delay(1f), fadeIn(4f)));
 
 
         tWorld.addActor(tBackground);
+
         tWorld.addActor(tCluster);
-        System.out.println("AAAA");
+        tWorld.addActor(tNextLevel);
+        //();
+        //System.out.println("AAAA");
         Gdx.input.setInputProcessor(tWorld);
 
     }
@@ -260,23 +302,62 @@ public class LycopersiconScreen implements Screen {
 
         for (int i = 0; i < 50; i++)
         {
-            Twinkle t = new Twinkle(tViewport);
+            Twinkle t = new Twinkle(tViewport, false);
 
             tTitleUI.addActor(t);
         }
     }
-    private void nextLevel()
-    {
+
+    private void setUpNextLevel() {
+
+    }
+
+    /**
+     * Next level removes the current cluster
+     * sets tCluster to a more "difficult" cluster
+     */
+    private void nextLevel() {
+
+        //Gdx.input.setInputProcessor(tNextLevelUI);
         tWorld.getActors().removeValue(tCluster, true);
-        System.out.println(tViewport.getScreenWidth());
-        System.out.println(tTileSize);
-        TomatoCluster a = new TomatoCluster(1, 5, 2, tStemNumber, tViewport, true, tTileSize);
-        a.setPosition(0, 0);
-        a.fill();
-        tWorld.addActor(a);
+        tCluster = new TomatoCluster(1, tLevel * 3, tLevel * 10, tStemNumber, tViewport, true, tTileSize);
+        tCluster.setPosition(0, 0);
+        tCluster.fill();
+        tLevel++;
+        tBackground.addAction(Actions.parallel(Actions.fadeOut(5f), Actions.sequence(delay(2f), run(new Runnable() {
+            @Override
+            public void run() {
+                tBackground.clearActions();
+
+            }
+        }))));
+        Timer.schedule(new Timer.Task() {
+            @Override
+            public void run() {
+                tNextLevel.addAction(Actions.sequence(Actions.moveTo(tViewport.getScreenWidth() / 2 - tNextLevel.getWidth() / 2, tViewport.getScreenHeight() / 2, 1f), delay(1f), Actions.moveTo(tViewport.getScreenWidth(), tViewport.getScreenHeight() / 2, 1f)));
+
+            }
+        }, 3, 0, 0);
+        Timer.schedule(new Timer.Task() {
+            @Override
+            public void run() {
+                tBackground.addAction(Actions.fadeIn(2f));
+            }
+        }, 5, 0, 0);
+        Timer.schedule(new Timer.Task() {
+            @Override
+            public void run() {
+
+                tWorld.addActor(tCluster);
+            }
+        }, 7, 0, 0);
+
+
         System.out.println(tWorld.getActors());
 
         //tWorld.add
+
+
     }
 
 
