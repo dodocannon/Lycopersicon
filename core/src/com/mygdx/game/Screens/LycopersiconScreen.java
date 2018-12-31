@@ -15,12 +15,14 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveByAction;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Pool;
@@ -28,6 +30,7 @@ import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.Background;
 import com.mygdx.game.GameOverUI;
+import com.mygdx.game.LycoButton;
 import com.mygdx.game.Lycopersicon;
 import com.mygdx.game.LycopersiconTitleUI;
 import com.mygdx.game.NextLevelUI;
@@ -80,6 +83,7 @@ public class LycopersiconScreen implements Screen {
 
     private TapPrompt tTapPrompt;
     private Image tNextLevel;
+    private LycoButton tReplayButton, tHomeButton;
 
     private int tStemNumber, tLevel;
     private float tTileSize;
@@ -103,6 +107,10 @@ public class LycopersiconScreen implements Screen {
 
         tTapPrompt = new TapPrompt(tViewport);
         tNextLevel = new Image(new Texture(Gdx.files.internal("nextLevel.png")));
+
+        tReplayButton = new LycoButton(tViewport, new Texture(Gdx.files.internal("replayButton.png")));
+        tHomeButton = new LycoButton(tViewport, new Texture(Gdx.files.internal("homeButton.png")));
+
 
 
 
@@ -143,17 +151,16 @@ public class LycopersiconScreen implements Screen {
 
     @Override
     public void render(float delta) {
-
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         if (Gdx.input.getInputProcessor().equals(tTitleUI)) {
-            Gdx.gl.glClearColor(0, 0, 0, 1);
-            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
             tTitleUI.draw();
             tTitleUI.act(delta);
         }
         if (Gdx.input.getInputProcessor().equals(tWorld)) {
-            Gdx.gl.glClearColor(0, 0, 0, 1);
-            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
             if (tCluster.remainingTargets() == 0) {
                 nextLevel();
                 System.out.println("SSSS");
@@ -162,10 +169,19 @@ public class LycopersiconScreen implements Screen {
             tWorld.act(delta);
             drawHUD();
 
+
+        }
+        if (Gdx.input.getInputProcessor().equals(tGameOverUI)) {
+            // tWorld.draw();
+            //drawHUD();
+            tGameOverUI.draw();
+            tGameOverUI.act();
         }
         /*if (Gdx.input.getInputProcessor().equals(tNextLevelUI))
         {
-            Gdx.gl.glClearColor(MathUtils.random(), MathUtils.random(), MathUtils.random(), 1);
+            G.
+
+            dx.gl.glClearColor(MathUtils.random(), MathUtils.random(), MathUtils.random(), 1);
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
             tNextLevelUI.act();
             tNextLevelUI.draw();
@@ -189,10 +205,16 @@ public class LycopersiconScreen implements Screen {
 
 
         tTitleUI.addActor(tTapPrompt);
+        tReplayButton.init();
+        tHomeButton.init();
+        tReplayButton.setPosition(tViewport.getScreenWidth() / 10, tViewport.getScreenHeight() / 7);
+        tHomeButton.setPosition(tViewport.getScreenWidth() - tViewport.getScreenWidth() / 10, tViewport.getScreenHeight() / 7);
+
 
         setUpTitle();
         setUpTitleUIListener();
         setUpNextLevel();
+        setUpGameOverUI();
 
 
     }
@@ -231,6 +253,10 @@ public class LycopersiconScreen implements Screen {
         tLayout.setText(tFont, "Level:" + tLevel);
         tFont.draw(tBatch, tLayout, tViewport.getScreenWidth() / 2, tViewport.getScreenHeight() * 11 / 12);
         tBatch.end();
+    }
+
+    private void drawTimer() {
+
     }
 
     private void drawLevel() {
@@ -320,10 +346,14 @@ public class LycopersiconScreen implements Screen {
             tBackground.clear();
             tBackground.initSpace2();
         }
+        //debug
+        if (tLevel == 2) {
+            gameOver();
+        }
         tNextLevel.setPosition(-tNextLevel.getWidth(), tViewport.getScreenHeight() / 2 - tNextLevel.getHeight());
         tWorld.getActors().removeValue(tCluster, true);
         tStemNumber = MathUtils.random(4);
-        tCluster = new TomatoCluster(1, tLevel + 2, tLevel + .25f, tStemNumber, tViewport, true, tTileSize);
+        tCluster = new TomatoCluster(1, tLevel + 2, tLevel * 1.5f, tStemNumber, tViewport, true, tTileSize);
         tCluster.setPosition(0, 0);
         tCluster.fill();
         tLevel++;
@@ -354,11 +384,31 @@ public class LycopersiconScreen implements Screen {
                 tWorld.addActor(tCluster);
             }
         }, 5, 0, 0);
+    }
 
+    private void gameOver() {
 
+        Gdx.input.setInputProcessor(tGameOverUI);
+    }
 
+    private void setUpGameOverUI() {
 
-
+        tReplayButton.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                tReplayButton.addAction(sequence(moveBy(0, -10, .5f), moveBy(0, 5f, .5f)));
+                return true;
+            }
+        });
+        tHomeButton.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                tHomeButton.addAction(sequence(moveBy(0, -10, .5f), moveBy(0, 5f, .5f)));
+                return true;
+            }
+        });
+        tGameOverUI.addActor(tReplayButton);
+        tGameOverUI.addActor(tHomeButton);
     }
 
 
