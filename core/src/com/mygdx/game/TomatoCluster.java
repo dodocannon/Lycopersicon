@@ -18,11 +18,10 @@ public class TomatoCluster extends Group {
     private Viewport globalViewport;
     private boolean random;
 
-    public TomatoCluster(float tomatoX, float tomatoY,float velocity, int appleTarget, Viewport globalViewport, boolean random, float tileSize)
+    public TomatoCluster(float tomatoX, float tomatoY, float velocity, Viewport globalViewport, boolean random, float tileSize)
     {
 
         this.globalViewport = globalViewport;
-        this.appleTarget = appleTarget;
         this.tomatoY = tomatoY;
         this.tomatoX = tomatoX;
         this.random = random;
@@ -45,7 +44,7 @@ public class TomatoCluster extends Group {
      * Updates tTarget counter
      */
     public void fill() {
-
+        appleTarget = MathUtils.random(4);
         int rand;
         //fills apples in systemic manner
         if (!random) {
@@ -83,7 +82,7 @@ public class TomatoCluster extends Group {
         }
         if (tTargets == 0) {
             for (Actor t : getChildren()) {
-                removeActor(t);
+                t.remove();
             }
             fill();
         }
@@ -93,6 +92,10 @@ public class TomatoCluster extends Group {
     public void reset()
     {
         tTargets = 0;
+        tomatoX = 1;
+        tomatoY = 1;
+        velocity = 1;
+        fill();
     }
 
     public int remainingTargets() {
@@ -119,6 +122,10 @@ public class TomatoCluster extends Group {
             ((Tomato) t).setVelX(((Tomato) t).getVelX() * scale);
             ((Tomato) t).setVelY(((Tomato) t).getVelY() * scale);
         }
+    }
+
+    public int getTarget() {
+        return appleTarget;
     }
 
     /**

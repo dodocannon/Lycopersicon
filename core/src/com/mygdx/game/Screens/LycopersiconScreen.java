@@ -2,7 +2,6 @@ package com.mygdx.game.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -11,21 +10,14 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.actions.MoveByAction;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -197,11 +189,6 @@ public class LycopersiconScreen implements Screen {
 
     }
 
-    private Drawable textureToDrawable(Texture t) // I made this method to convert textures to drawables for ease of modification in the table
-    {
-        return new TextureRegionDrawable(new TextureRegion(t));
-    }
-
     @Override
     public void resize(int width, int height) {
         tViewport.update(width, height);
@@ -217,12 +204,12 @@ public class LycopersiconScreen implements Screen {
         tHomeButton.setPosition(tViewport.getScreenWidth() - tViewport.getScreenWidth() / 10, tViewport.getScreenHeight() / 7);
         tScorePane.init();
 
+        tGameOverUI.addActor(tReplayButton);
+        tGameOverUI.addActor(tHomeButton);
 
         setUpTitle();
         setUpTitleUIListener();
-        setUpNextLevel();
-        setUpGameOverUI();
-
+        setUpReplayButtonListener();
 
     }
 
@@ -253,7 +240,7 @@ public class LycopersiconScreen implements Screen {
 
     private void drawHUD() {
         tBatch.begin();
-        tLayout.setText(tFont, "STEMS:" + tStemNumber);
+        tLayout.setText(tFont, "STEMS:" + tCluster.getTarget());
         tFont.draw(tBatch, tLayout, 0, tViewport.getScreenHeight() - tViewport.getScreenHeight() / 12);
         tLayout.setText(tFont, "Lycos Left: " + tCluster.remainingTargets());
         tFont.draw(tBatch, tLayout, tViewport.getScreenWidth() / 1.5f, tViewport.getScreenHeight() * 11 / 12);
@@ -314,7 +301,7 @@ public class LycopersiconScreen implements Screen {
         setUpWorldListener();
         tStemNumber = MathUtils.random(4);
 
-        tCluster = new TomatoCluster(1, tLevel, tLevel, tStemNumber, tViewport, true, tTileSize);
+        tCluster = new TomatoCluster(1, tLevel, tLevel, tViewport, true, tTileSize);
         tBackground = new Background(tViewport, tTileSize);
         tBackground.initFarm();
 
@@ -342,9 +329,7 @@ public class LycopersiconScreen implements Screen {
         }
     }
 
-    private void setUpNextLevel() {
 
-    }
 
     /**
      * Next level removes the current cluster
@@ -364,7 +349,7 @@ public class LycopersiconScreen implements Screen {
         tNextLevel.setPosition(-tNextLevel.getWidth(), tViewport.getScreenHeight() / 2 - tNextLevel.getHeight());
         tWorld.getActors().removeValue(tCluster, true);
         tStemNumber = MathUtils.random(4);
-        tCluster = new TomatoCluster(1, tLevel + 2, tLevel * 1.5f, tStemNumber, tViewport, true, tTileSize);
+        tCluster = new TomatoCluster(1, tLevel + 2, tLevel * 1.5f, tViewport, true, tTileSize);
         tCluster.setPosition(0, 0);
         tCluster.fill();
         tLevel++;
@@ -404,7 +389,7 @@ public class LycopersiconScreen implements Screen {
         tTimeLeft = 10;
         tCluster.remove();
         tStemNumber = MathUtils.random(4);
-        tCluster = new TomatoCluster(1, tLevel, tLevel, tStemNumber, tViewport, true, tTileSize);
+        tCluster = new TomatoCluster(1, tLevel, tLevel, tViewport, true, tTileSize);
         tCluster.setPosition(0, 0);
         tCluster.fill();
         tWorld.addActor(tCluster);
@@ -414,16 +399,21 @@ public class LycopersiconScreen implements Screen {
 
     }
 
-    private void gameOver() {
-       /* if (tElapsedTime > tData.getFloat("highScore")) {
-            tData.putFloat("highScore", tElapsedTime);
-            tData.flush();
-        }
-        tScorePane.updateScore(tElapsedTime);
-        tScorePane.updateHighScore(tData.getFloat("highScore"));*/
+    private void resetGame() {
         tHomeButton.reset();
         tReplayButton.reset();
+        tCluster.reset();
+
+        tTimeLeft = 10;
+        Gdx.input.setInputProcessor(tWorld);
+
+
+    }
+
+    private void gameOver() {
         Gdx.input.setInputProcessor(tGameOverUI);
+        System.out.println("Scum gang");
+        tReplayButton.setTouchable(Touchable.enabled);
     }
 
     private void setUpGameOverUI() {
@@ -470,6 +460,46 @@ public class LycopersiconScreen implements Screen {
     private void clearGameOverScreen() {
         tHomeButton.addAction(fadeOut(.25f));
         tReplayButton.addAction(fadeOut(.25f));
+    }
+
+    private void setUpReplayButtonListener() {
+        tReplayButton.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                tHomeButton.setTouchable(Touchable.disabled);
+                tReplayButton.setTouchable(Touchable.disabled);
+
+                tReplayButton.addAction(sequence(moveBy(0, -10, .25f), moveBy(0, 10f, .25f), run(new Runnable() {
+                    @Override
+                    public void run() {
+                        resetGame();
+                    }
+                })));
+                return true;
+            }
+        });
+    }
+
+    private void setUpHomeButtonListener() {
+        tReplayButton.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                tHomeButton.setTouchable(Touchable.disabled);
+                tReplayButton.setTouchable(Touchable.disabled);
+
+                tReplayButton.addAction(sequence(moveBy(0, -10, .25f), moveBy(0, 10f, .25f), run(new Runnable() {
+                    @Override
+                    public void run() {
+                        goHome();
+                    }
+                })));
+                return true;
+            }
+        });
+    }
+
+    private void goHome() {
+
     }
 
 

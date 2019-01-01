@@ -21,6 +21,7 @@ public class LycoButton extends Actor {
     }
 
     public void reset() {
+        this.clearActions();
         setColor(getColor().r, getColor().g, getColor().b, 1);
     }
 
