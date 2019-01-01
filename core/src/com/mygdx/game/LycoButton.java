@@ -20,6 +20,10 @@ public class LycoButton extends Actor {
 
     }
 
+    public void reset() {
+        setColor(getColor().r, getColor().g, getColor().b, 1);
+    }
+
     @Override
     public void draw(Batch batch, float parentAlpha) {
         super.draw(batch, parentAlpha);

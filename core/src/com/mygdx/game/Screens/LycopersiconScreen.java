@@ -89,7 +89,7 @@ public class LycopersiconScreen implements Screen {
     private ScorePane tScorePane;
 
     private int tStemNumber, tLevel;
-    private float tTileSize, tElapsedTime;
+    private float tTileSize, tTimeLeft;
 
     private Preferences tData;
 
@@ -117,7 +117,7 @@ public class LycopersiconScreen implements Screen {
         tHomeButton = new LycoButton(tViewport, new Texture(Gdx.files.internal("homeButton.png")));
         tScorePane = new ScorePane(tViewport);
 
-        tElapsedTime = 0f;
+        tTimeLeft = 10f;
 
         tData = Gdx.app.getPreferences("LycopersiconData");
 
@@ -169,20 +169,26 @@ public class LycopersiconScreen implements Screen {
             tTitleUI.act(delta);
         }
         if (Gdx.input.getInputProcessor().equals(tWorld)) {
-            tElapsedTime += delta;
+
             if (tCluster.remainingTargets() == 0) {
                 nextLevel();
-                System.out.println("SSSS");
+                //System.out.println("SSSS");
             }
+            if (tTimeLeft <= 0) {
+                gameOver();
+            }
+
+            tTimeLeft -= delta;
             tWorld.draw();
             tWorld.act(delta);
             drawHUD();
 
 
+
         }
         if (Gdx.input.getInputProcessor().equals(tGameOverUI)) {
             tWorld.draw();
-            drawHUD();
+            //drawHUD();
             tGameOverUI.draw();
             tGameOverUI.act();
         }
@@ -253,7 +259,7 @@ public class LycopersiconScreen implements Screen {
         tFont.draw(tBatch, tLayout, tViewport.getScreenWidth() / 1.5f, tViewport.getScreenHeight() * 11 / 12);
         tLayout.setText(tFont, "Level:" + tLevel);
         tFont.draw(tBatch, tLayout, tViewport.getScreenWidth() / 2, tViewport.getScreenHeight() * 11 / 12);
-        tLayout.setText(tFont, "Score: " + tElapsedTime);
+        tLayout.setText(tFont, "Score: " + tTimeLeft);
         tFont.draw(tBatch, tLayout, tViewport.getScreenWidth() / 2, tViewport.getScreenHeight() * 10 / 12);
         tBatch.end();
     }
@@ -345,15 +351,16 @@ public class LycopersiconScreen implements Screen {
      * sets tCluster to a more "difficult" cluster
      */
     private void nextLevel() {
+        tTimeLeft = 10;
         if (tLevel >= 5) {
             tBackground.clear();
             tBackground.initSpace2();
         }
         //debug
-        if (tLevel == 2) {
+        /*if (tLevel == 2) {
             gameOver();
             return;
-        }
+        }*/
         tNextLevel.setPosition(-tNextLevel.getWidth(), tViewport.getScreenHeight() / 2 - tNextLevel.getHeight());
         tWorld.getActors().removeValue(tCluster, true);
         tStemNumber = MathUtils.random(4);
@@ -386,6 +393,7 @@ public class LycopersiconScreen implements Screen {
             public void run() {
 
                 tWorld.addActor(tCluster);
+                tTimeLeft = 10;
             }
         }, 3, 0, 0);
     }
@@ -393,8 +401,8 @@ public class LycopersiconScreen implements Screen {
     private void startLevel() {
 
         tLevel = 1;
-        tElapsedTime = 0;
-        tWorld.getActors().removeValue(tCluster, true);
+        tTimeLeft = 10;
+        tCluster.remove();
         tStemNumber = MathUtils.random(4);
         tCluster = new TomatoCluster(1, tLevel, tLevel, tStemNumber, tViewport, true, tTileSize);
         tCluster.setPosition(0, 0);
@@ -407,12 +415,14 @@ public class LycopersiconScreen implements Screen {
     }
 
     private void gameOver() {
-        if (tElapsedTime > tData.getFloat("highScore")) {
+       /* if (tElapsedTime > tData.getFloat("highScore")) {
             tData.putFloat("highScore", tElapsedTime);
             tData.flush();
         }
         tScorePane.updateScore(tElapsedTime);
-        tScorePane.updateHighScore(tData.getFloat("highScore"));
+        tScorePane.updateHighScore(tData.getFloat("highScore"));*/
+        tHomeButton.reset();
+        tReplayButton.reset();
         Gdx.input.setInputProcessor(tGameOverUI);
     }
 
@@ -422,14 +432,16 @@ public class LycopersiconScreen implements Screen {
         tReplayButton.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                tReplayButton.clearActions();
                 tReplayButton.addAction(sequence(moveBy(0, -10, .25f), moveBy(0, 10f, .25f), run(new Runnable() {
                     @Override
                     public void run() {
                         clearGameOverScreen();
                     }
-                }), delay(2f), run(new Runnable() {
+                }), delay(.25f), run(new Runnable() {
                     @Override
                     public void run() {
+                        System.out.println("Gameoverran");
                         startLevel();
 
                     }
@@ -440,6 +452,7 @@ public class LycopersiconScreen implements Screen {
         tHomeButton.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                tHomeButton.clearActions();
                 tHomeButton.addAction(sequence(moveBy(0, -10, .25f), moveBy(0, 10f, .25f), run(new Runnable() {
                     @Override
                     public void run() {
@@ -455,8 +468,8 @@ public class LycopersiconScreen implements Screen {
     }
 
     private void clearGameOverScreen() {
-        tHomeButton.addAction(fadeOut(2f));
-        tReplayButton.addAction(fadeOut(2f));
+        tHomeButton.addAction(fadeOut(.25f));
+        tReplayButton.addAction(fadeOut(.25f));
     }
 
 
