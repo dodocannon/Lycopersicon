@@ -134,9 +134,9 @@ public class LycopersiconScreen implements Screen {
         tParams = new FreeTypeFontGenerator.FreeTypeFontParameter();
         tLayout = new GlyphLayout();
 
-        tParams.size = (tViewport.getScreenHeight() / 20);
+        tParams.size = (tViewport.getScreenHeight() / 9);
 
-        tParams.color = Color.BLACK;
+        tParams.color = Color.WHITE;
         tFont = tGenerator.generateFont(tParams);
 
 
@@ -242,13 +242,13 @@ public class LycopersiconScreen implements Screen {
     private void drawHUD() {
         tBatch.begin();
         tLayout.setText(tFont, "STEMS:" + tCluster.getTarget());
-        tFont.draw(tBatch, tLayout, 0, tViewport.getScreenHeight() - tViewport.getScreenHeight() / 12);
-        tLayout.setText(tFont, "Lycos Left: " + tCluster.remainingTargets());
-        tFont.draw(tBatch, tLayout, tViewport.getScreenWidth() / 1.5f, tViewport.getScreenHeight() * 11 / 12);
-        tLayout.setText(tFont, "Level:" + tLevel);
-        tFont.draw(tBatch, tLayout, tViewport.getScreenWidth() / 2, tViewport.getScreenHeight() * 11 / 12);
-        tLayout.setText(tFont, "Score: " + tTimeLeft);
-        tFont.draw(tBatch, tLayout, tViewport.getScreenWidth() / 2, tViewport.getScreenHeight() * 10 / 12);
+        tFont.draw(tBatch, tLayout, tViewport.getScreenWidth() / 20, tViewport.getScreenHeight() - tViewport.getScreenHeight() / 12 + tViewport.getScreenHeight() / 20);
+        tLayout.setText(tFont, "LEFT:" + tCluster.remainingTargets());
+        tFont.draw(tBatch, tLayout, tViewport.getScreenWidth() - tViewport.getScreenHeight() / 2, tViewport.getScreenHeight() * 11 / 12 + tViewport.getScreenHeight() / 20);
+        tLayout.setText(tFont, "LEVEL:" + tLevel);
+        tFont.draw(tBatch, tLayout, tViewport.getScreenWidth() - tViewport.getScreenHeight() / 2, tViewport.getScreenHeight() / 10);
+        tLayout.setText(tFont, "" + tTimeLeft);
+        tFont.draw(tBatch, tLayout, tViewport.getScreenWidth() / 20, tViewport.getScreenHeight() / 10);
         tBatch.end();
     }
 
