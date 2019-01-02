@@ -35,6 +35,12 @@ public class TapPrompt extends Actor {
     }
 
     public void reset() {
+        this.setWidth(7.429f * tViewport.getScreenWidth() * .13f);
+        this.setHeight(1 * tViewport.getScreenWidth() * .13f);
+        this.clearActions();
+        this.setOrigin(getWidth() / 2, getHeight() / 2);
+        addAction(Actions.forever(Actions.sequence(Actions.fadeOut(1f), Actions.fadeIn(1f))));
+        this.clearActions();
 
     }
 

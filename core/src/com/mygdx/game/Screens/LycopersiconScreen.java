@@ -161,7 +161,7 @@ public class LycopersiconScreen implements Screen {
             tTitleUI.act(delta);
         }
         if (Gdx.input.getInputProcessor().equals(tWorld)) {
-
+            tCluster.print();
             if (tCluster.remainingTargets() == 0) {
                 nextLevel();
                 //System.out.println("SSSS");
@@ -210,6 +210,7 @@ public class LycopersiconScreen implements Screen {
         setUpTitle();
         setUpTitleUIListener();
         setUpReplayButtonListener();
+        setUpHomeButtonListener();
 
     }
 
@@ -347,11 +348,14 @@ public class LycopersiconScreen implements Screen {
             return;
         }*/
         tNextLevel.setPosition(-tNextLevel.getWidth(), tViewport.getScreenHeight() / 2 - tNextLevel.getHeight());
-        tWorld.getActors().removeValue(tCluster, true);
+        tCluster.remove();
+
         tStemNumber = MathUtils.random(4);
-        tCluster = new TomatoCluster(1, tLevel + 2, tLevel * 1.5f, tViewport, true, tTileSize);
+        /*tCluster = new TomatoCluster(1, tLevel + 2, tLevel * 1.5f, tViewport, true, tTileSize);
+
         tCluster.setPosition(0, 0);
-        tCluster.fill();
+        tCluster.fill();*/
+        tCluster.raiseDifficulty();
         tLevel++;
         tBackground.addAction(Actions.parallel(Actions.fadeOut(1f), Actions.sequence(delay(1f), run(new Runnable() {
             @Override
@@ -383,21 +387,7 @@ public class LycopersiconScreen implements Screen {
         }, 3, 0, 0);
     }
 
-    private void startLevel() {
 
-        tLevel = 1;
-        tTimeLeft = 10;
-        tCluster.remove();
-        tStemNumber = MathUtils.random(4);
-        tCluster = new TomatoCluster(1, tLevel, tLevel, tViewport, true, tTileSize);
-        tCluster.setPosition(0, 0);
-        tCluster.fill();
-        tWorld.addActor(tCluster);
-        System.out.println("scum" + tCluster.remainingTargets());
-        Gdx.input.setInputProcessor(tWorld);
-
-
-    }
 
     private void resetGame() {
         tHomeButton.reset();
@@ -405,6 +395,7 @@ public class LycopersiconScreen implements Screen {
         tCluster.reset();
 
         tTimeLeft = 10;
+        tLevel = 1;
         Gdx.input.setInputProcessor(tWorld);
 
 
@@ -414,53 +405,13 @@ public class LycopersiconScreen implements Screen {
         Gdx.input.setInputProcessor(tGameOverUI);
         System.out.println("Scum gang");
         tReplayButton.setTouchable(Touchable.enabled);
+        tHomeButton.setTouchable(Touchable.enabled);
     }
 
-    private void setUpGameOverUI() {
 
 
-        tReplayButton.addListener(new InputListener() {
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                tReplayButton.clearActions();
-                tReplayButton.addAction(sequence(moveBy(0, -10, .25f), moveBy(0, 10f, .25f), run(new Runnable() {
-                    @Override
-                    public void run() {
-                        clearGameOverScreen();
-                    }
-                }), delay(.25f), run(new Runnable() {
-                    @Override
-                    public void run() {
-                        System.out.println("Gameoverran");
-                        startLevel();
 
-                    }
-                })));
-                return true;
-            }
-        });
-        tHomeButton.addListener(new InputListener() {
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                tHomeButton.clearActions();
-                tHomeButton.addAction(sequence(moveBy(0, -10, .25f), moveBy(0, 10f, .25f), run(new Runnable() {
-                    @Override
-                    public void run() {
-                        clearGameOverScreen();
-                    }
-                })));
-                return true;
-            }
-        });
-        tGameOverUI.addActor(tReplayButton);
-        tGameOverUI.addActor(tHomeButton);
-        tGameOverUI.addActor(tScorePane);
-    }
 
-    private void clearGameOverScreen() {
-        tHomeButton.addAction(fadeOut(.25f));
-        tReplayButton.addAction(fadeOut(.25f));
-    }
 
     private void setUpReplayButtonListener() {
         tReplayButton.addListener(new InputListener() {
@@ -481,13 +432,13 @@ public class LycopersiconScreen implements Screen {
     }
 
     private void setUpHomeButtonListener() {
-        tReplayButton.addListener(new InputListener() {
+        tHomeButton.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 tHomeButton.setTouchable(Touchable.disabled);
                 tReplayButton.setTouchable(Touchable.disabled);
 
-                tReplayButton.addAction(sequence(moveBy(0, -10, .25f), moveBy(0, 10f, .25f), run(new Runnable() {
+                tHomeButton.addAction(sequence(moveBy(0, -10, .25f), moveBy(0, 10f, .25f), run(new Runnable() {
                     @Override
                     public void run() {
                         goHome();
@@ -499,7 +450,14 @@ public class LycopersiconScreen implements Screen {
     }
 
     private void goHome() {
+        tHomeButton.reset();
+        tReplayButton.reset();
+        tCluster.reset();
+        tTapPrompt.reset();
 
+        tTimeLeft = 10;
+
+        Gdx.input.setInputProcessor(tTitleUI);
     }
 
 

@@ -48,6 +48,10 @@ public class ScorePane extends Actor {
         tGenerator.dispose();
     }
 
+    public void reset() {
+
+    }
+
     @Override
     public void draw(Batch batch, float parentAlpha) {
         super.draw(batch, parentAlpha);

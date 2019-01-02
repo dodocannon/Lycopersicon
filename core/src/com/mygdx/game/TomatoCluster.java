@@ -44,29 +44,11 @@ public class TomatoCluster extends Group {
      * Updates tTarget counter
      */
     public void fill() {
+        dispose();
         appleTarget = MathUtils.random(4);
         int rand;
         //fills apples in systemic manner
-        if (!random) {
-            for (int k = 0; k < tomatoY; k++) {
-                float posX = 0;
-                for (int i = 0; i < tomatoX; i++) {
-                    rand = MathUtils.random(4);                 
-                    if (i!=0) {
-                        posX+= tomatoSize;
-                    }
-                    posX += offset;
-                    Tomato curr = new Tomato(rand, rand == appleTarget, globalViewport, posX,   k * globalViewport.getScreenWidth() / 12, 0,0,tileSize);
-                    if (curr.isRightTomato()) {
-                        tTargets++;
-                    }
 
-                    this.addActor(curr);
-                }
-
-
-            }
-        } else {
             for (int i = 0; i < tomatoX * tomatoY; i++) {
                 rand = MathUtils.random(4);
                 Tomato curr = new Tomato(rand, rand == appleTarget, globalViewport, MathUtils.random(screenW - screenW/12), MathUtils.random(screenH - 2 * tileSize - screenW/12), getRandomVelocity(),getRandomVelocity(),tileSize);
@@ -79,19 +61,19 @@ public class TomatoCluster extends Group {
                 addActor(curr);
 
             }
-        }
         if (tTargets == 0) {
-            for (Actor t : getChildren()) {
-                t.remove();
-            }
+
             fill();
         }
 
     }
 
+
     public void reset()
     {
+        dispose();
         tTargets = 0;
+        //setPosition(0,0);
         tomatoX = 1;
         tomatoY = 1;
         velocity = 1;
@@ -140,6 +122,7 @@ public class TomatoCluster extends Group {
     public void dispose() {
         for (Actor t : getChildren()) {
             ((Tomato) t).dispose();
+            t.remove();
         }
 
     }
@@ -155,6 +138,25 @@ public class TomatoCluster extends Group {
                 System.out.println("removed");
             }
         }
+    }
+
+    public void raiseDifficulty() {
+
+        for (Actor t : getChildren()) {
+            t.remove();
+        }
+        //tTargets = 0;
+        //setPosition(0,0);
+        tomatoX = 1;
+        tomatoY += 2;
+        velocity = velocity * 1.25f;
+        fill();
+
+
+    }
+
+    public void print() {
+        System.out.println(tomatoY);
     }
 
 
