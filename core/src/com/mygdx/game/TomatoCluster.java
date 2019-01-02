@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 
@@ -16,15 +17,13 @@ public class TomatoCluster extends Group {
 
 
     private Viewport globalViewport;
-    private boolean random;
 
-    public TomatoCluster(float tomatoX, float tomatoY, float velocity, Viewport globalViewport, boolean random, float tileSize)
+    public TomatoCluster(float tomatoX, float tomatoY, float velocity, Viewport globalViewport, float tileSize)
     {
 
         this.globalViewport = globalViewport;
         this.tomatoY = tomatoY;
         this.tomatoX = tomatoX;
-        this.random = random;
         this.tileSize = tileSize;
         this.velocity = velocity;
 
@@ -51,7 +50,20 @@ public class TomatoCluster extends Group {
         offset = (screenW - (tomatoX * tomatoSize))/(tomatoX+1);
         appleTarget = MathUtils.random(4);
         int rand;
-        if (!random) {
+        if (tomatoX <= 20) {
+            for (int i = 0; i < tomatoX * tomatoY; i++) {
+                rand = MathUtils.random(4);
+                Tomato curr = new Tomato(rand, rand == appleTarget, globalViewport, MathUtils.random(screenW - screenW / 12), MathUtils.random(screenH - 2 * tileSize - screenW / 12), getRandomVelocity(), getRandomVelocity(), tileSize, screenW / 12);
+                if (curr.isRightTomato()) {
+                    tTargets++;
+                    //curr.startCountdown();
+
+                }
+
+                addActor(curr);
+
+            }
+        } else {
             for (int k = 0; k < tomatoY; k++) {
                 float posX = 0;
                 for (int i = 0; i < tomatoX; i++) {
@@ -63,7 +75,7 @@ public class TomatoCluster extends Group {
                     /**
                      * This is for the curr when apples start to get clutter the screen (systematic spread out positioning)
                      */
-                    Tomato curr = new Tomato(rand, rand == appleTarget, globalViewport, posX, 0, 0,getRandomVelocity() , tileSize, tomatoSize);
+                    Tomato curr = new Tomato(rand, rand == appleTarget, globalViewport, posX, 0, 0, getRandomVelocity(), tileSize, tomatoSize);
                     if (curr.isRightTomato()) {
                         tTargets++;
                     }
@@ -75,20 +87,9 @@ public class TomatoCluster extends Group {
             }
         }
         //fills apples in systemic manner
-        else {
-            for (int i = 0; i < tomatoX * tomatoY; i++) {
-                rand = MathUtils.random(4);
-                Tomato curr = new Tomato(rand, rand == appleTarget, globalViewport, MathUtils.random(screenW - screenW / 12), MathUtils.random(screenH - 2 * tileSize - screenW / 12), getRandomVelocity(), getRandomVelocity(), tileSize,screenW/12);
-                if (curr.isRightTomato()) {
-                    tTargets++;
-                    //curr.startCountdown();
 
-                }
 
-                addActor(curr);
 
-            }
-        }
         if (tTargets == 0) {
 
             fill();
@@ -157,8 +158,9 @@ public class TomatoCluster extends Group {
 
     public void dispose() {
         for (Actor t : getChildren()) {
-            ((Tomato) t).dispose();
-            removeActor(t);
+            t.addAction(Actions.removeActor());
+
+
         }
 
     }
@@ -170,7 +172,8 @@ public class TomatoCluster extends Group {
             if (((Tomato) t).isAlreadyExploded())
             {
                 tTargets--;
-                removeActor(t);
+                this.removeActor(t);
+                t.remove();
                 System.out.println("removed");
             }
         }

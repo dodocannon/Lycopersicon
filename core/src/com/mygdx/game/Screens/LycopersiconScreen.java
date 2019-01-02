@@ -161,7 +161,7 @@ public class LycopersiconScreen implements Screen {
             tTitleUI.act(delta);
         }
         if (Gdx.input.getInputProcessor().equals(tWorld)) {
-            tCluster.print();
+            //tCluster.print();
             if (tCluster.remainingTargets() == 0) {
                 nextLevel();
                 //System.out.println("SSSS");
@@ -302,7 +302,7 @@ public class LycopersiconScreen implements Screen {
         setUpWorldListener();
         tStemNumber = MathUtils.random(4);
 
-        tCluster = new TomatoCluster(1, tLevel, tLevel, tViewport, false, tTileSize);
+        tCluster = new TomatoCluster(1, tLevel, tLevel, tViewport, tTileSize);
         tBackground = new Background(tViewport, tTileSize);
         tBackground.initFarm();
 
