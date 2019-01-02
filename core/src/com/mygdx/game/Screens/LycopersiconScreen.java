@@ -193,7 +193,7 @@ public class LycopersiconScreen implements Screen {
     public void resize(int width, int height) {
         tViewport.update(width, height);
         tTileSize = tViewport.getScreenWidth() / 10;
-
+        //tCluster.init();
         tTapPrompt.init();
 
 
@@ -302,7 +302,7 @@ public class LycopersiconScreen implements Screen {
         setUpWorldListener();
         tStemNumber = MathUtils.random(4);
 
-        tCluster = new TomatoCluster(1, tLevel, tLevel, tViewport, true, tTileSize);
+        tCluster = new TomatoCluster(1, tLevel, tLevel, tViewport, false, tTileSize);
         tBackground = new Background(tViewport, tTileSize);
         tBackground.initFarm();
 

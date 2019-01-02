@@ -53,10 +53,10 @@ public class Tomato extends Actor {
 
 
 
-    public Tomato(int tomatoNumber, boolean rightTomato, Viewport globalViewport, float x, float y,float velX,float velY, float tileSize)
+    public Tomato(int tomatoNumber, boolean rightTomato, Viewport globalViewport, float x, float y,float velX,float velY, float tileSize, float tomatoWidth)
     {
 
-        tomatoWidth = globalViewport.getScreenWidth()/12;
+        this.tomatoWidth = tomatoWidth;
         this.rightTomato = rightTomato;
         this.tomatoNumber = tomatoNumber;
         this.globalViewport = globalViewport;
@@ -107,6 +107,7 @@ public class Tomato extends Actor {
                 if (!alreadyExploded) {
                     clicked = true;
                     alreadyExploded = !alreadyExploded;
+
 
                 }
                 if (rightTomato) {

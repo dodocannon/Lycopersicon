@@ -33,6 +33,8 @@ public class TomatoCluster extends Group {
 
         tomatoSize = screenW/12;
         offset = (screenW - (tomatoX * tomatoSize))/(tomatoX+1);
+
+
         //this.setColor(getColor().r, getColor().g, getColor().b, 1);
 
 
@@ -45,13 +47,38 @@ public class TomatoCluster extends Group {
      */
     public void fill() {
         dispose();
+        tomatoSize = (tomatoX == 1) ? (screenW- tileSize)/tomatoX : screenW/tomatoX;
+        offset = (screenW - (tomatoX * tomatoSize))/(tomatoX+1);
         appleTarget = MathUtils.random(4);
         int rand;
-        //fills apples in systemic manner
+        if (!random) {
+            for (int k = 0; k < tomatoY; k++) {
+                float posX = 0;
+                for (int i = 0; i < tomatoX; i++) {
+                    rand = MathUtils.random(4);
+                    if (i != 0) {
+                        posX += tomatoSize;
+                    }
+                    posX += offset;
+                    /**
+                     * This is for the curr when apples start to get clutter the screen (systematic spread out positioning)
+                     */
+                    Tomato curr = new Tomato(rand, rand == appleTarget, globalViewport, posX, 0, 0,getRandomVelocity() , tileSize, tomatoSize);
+                    if (curr.isRightTomato()) {
+                        tTargets++;
+                    }
 
+                    this.addActor(curr);
+                }
+
+
+            }
+        }
+        //fills apples in systemic manner
+        else {
             for (int i = 0; i < tomatoX * tomatoY; i++) {
                 rand = MathUtils.random(4);
-                Tomato curr = new Tomato(rand, rand == appleTarget, globalViewport, MathUtils.random(screenW - screenW/12), MathUtils.random(screenH - 2 * tileSize - screenW/12), getRandomVelocity(),getRandomVelocity(),tileSize);
+                Tomato curr = new Tomato(rand, rand == appleTarget, globalViewport, MathUtils.random(screenW - screenW / 12), MathUtils.random(screenH - 2 * tileSize - screenW / 12), getRandomVelocity(), getRandomVelocity(), tileSize,screenW/12);
                 if (curr.isRightTomato()) {
                     tTargets++;
                     //curr.startCountdown();
@@ -61,6 +88,7 @@ public class TomatoCluster extends Group {
                 addActor(curr);
 
             }
+        }
         if (tTargets == 0) {
 
             fill();
@@ -78,6 +106,14 @@ public class TomatoCluster extends Group {
         tomatoY = 1;
         velocity = 1;
         fill();
+    }
+    public void init()
+    {
+        screenW = globalViewport.getScreenWidth();
+        screenH = globalViewport.getScreenHeight();
+
+        tomatoSize = screenW/12;
+        offset = (screenW - (tomatoX * tomatoSize))/(tomatoX+1);
     }
 
     public int remainingTargets() {
@@ -122,7 +158,7 @@ public class TomatoCluster extends Group {
     public void dispose() {
         for (Actor t : getChildren()) {
             ((Tomato) t).dispose();
-            t.remove();
+            removeActor(t);
         }
 
     }
@@ -142,13 +178,11 @@ public class TomatoCluster extends Group {
 
     public void raiseDifficulty() {
 
-        for (Actor t : getChildren()) {
-            t.remove();
-        }
+        dispose();
         //tTargets = 0;
         //setPosition(0,0);
-        tomatoX = 1;
-        tomatoY += 2;
+        tomatoX += 2;
+        tomatoY =1;
         velocity = velocity * 1.25f;
         fill();
 
@@ -156,7 +190,7 @@ public class TomatoCluster extends Group {
     }
 
     public void print() {
-        System.out.println(tomatoY);
+        System.out.println(offset);
     }
 
 
