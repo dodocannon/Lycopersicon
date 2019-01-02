@@ -12,17 +12,17 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 
 public class TomatoCluster extends Group {
-    private float tomatoX, tomatoY,screenW, screenH, velocity, tomatoSize, offset,tileSize;
+    private float tomatoX, screenW, screenH, velocity, tomatoSize, offset, tileSize;
     private int appleTarget, tTargets;
 
 
     private Viewport globalViewport;
 
-    public TomatoCluster(float tomatoX, float tomatoY, float velocity, Viewport globalViewport, float tileSize)
+    public TomatoCluster(float tomatoX, float velocity, Viewport globalViewport, float tileSize)
     {
 
         this.globalViewport = globalViewport;
-        this.tomatoY = tomatoY;
+
         this.tomatoX = tomatoX;
         this.tileSize = tileSize;
         this.velocity = velocity;
@@ -45,15 +45,14 @@ public class TomatoCluster extends Group {
      * Updates tTarget counter
      */
     public void fill() {
-        dispose();
         tomatoSize = (tomatoX == 1) ? (screenW- tileSize)/tomatoX : screenW/tomatoX;
         offset = (screenW - (tomatoX * tomatoSize))/(tomatoX+1);
         appleTarget = MathUtils.random(4);
         int rand;
         if (tomatoX <= 20) {
-            for (int i = 0; i < tomatoX * tomatoY; i++) {
+            for (int i = 0; i < tomatoX; i++) {
                 rand = MathUtils.random(4);
-                Tomato curr = new Tomato(rand, rand == appleTarget, globalViewport, MathUtils.random(screenW - screenW / 12), MathUtils.random(screenH - 2 * tileSize - screenW / 12), getRandomVelocity(), getRandomVelocity(), tileSize, screenW / 12);
+                Tomato curr = new Tomato((i == 0) ? appleTarget : rand, (i == 0) ? true : rand == appleTarget, globalViewport, MathUtils.random(screenW - screenW / 12), MathUtils.random(screenH - 2 * tileSize - screenW / 12), getRandomVelocity(), getRandomVelocity(), tileSize, screenW / 12);
                 if (curr.isRightTomato()) {
                     tTargets++;
                     //curr.startCountdown();
@@ -64,8 +63,8 @@ public class TomatoCluster extends Group {
 
             }
         } else {
-            for (int k = 0; k < tomatoY; k++) {
-                float posX = 0;
+
+            float posX = 0;
                 for (int i = 0; i < tomatoX; i++) {
                     rand = MathUtils.random(4);
                     if (i != 0) {
@@ -75,25 +74,21 @@ public class TomatoCluster extends Group {
                     /**
                      * This is for the curr when apples start to get clutter the screen (systematic spread out positioning)
                      */
-                    Tomato curr = new Tomato(rand, rand == appleTarget, globalViewport, posX, 0, 0, getRandomVelocity(), tileSize, tomatoSize);
+                    Tomato curr = new Tomato((i == 0) ? appleTarget : rand, (i == 0) ? true : rand == appleTarget, globalViewport, posX, 0, 0, getRandomVelocity(), tileSize, tomatoSize);
                     if (curr.isRightTomato()) {
                         tTargets++;
                     }
 
                     this.addActor(curr);
+
+
                 }
-
-
-            }
         }
         //fills apples in systemic manner
 
 
 
-        if (tTargets == 0) {
 
-            fill();
-        }
 
     }
 
@@ -104,7 +99,7 @@ public class TomatoCluster extends Group {
         tTargets = 0;
         //setPosition(0,0);
         tomatoX = 1;
-        tomatoY = 1;
+
         velocity = 1;
         fill();
     }
@@ -150,11 +145,7 @@ public class TomatoCluster extends Group {
     /**
      * Future method for implementation that starts countdown on tomato via method on group
      */
-    public void startCountdown() {
-        for (Actor t : getChildren()) {
-            ((Tomato) t).startCountdown();
-        }
-    }
+
 
     public void dispose() {
         for (Actor t : getChildren()) {
@@ -185,7 +176,7 @@ public class TomatoCluster extends Group {
         //tTargets = 0;
         //setPosition(0,0);
         tomatoX += 2;
-        tomatoY =1;
+
         velocity = velocity * 1.25f;
         fill();
 

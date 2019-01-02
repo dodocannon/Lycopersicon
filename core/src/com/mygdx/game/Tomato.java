@@ -244,13 +244,5 @@ public class Tomato extends Actor {
         velY = y;
     }
 
-    public void startCountdown() {
-        Timer.schedule(new Timer.Task() {
-            @Override
-            public void run() {
-
-                addAction(Actions.sequence(fadeOut(1f), fadeIn(1f)));
-            }
-        }, 5, 3, 5);
-    }
+    
 }

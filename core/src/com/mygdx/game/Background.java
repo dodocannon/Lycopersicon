@@ -3,6 +3,7 @@ package com.mygdx.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -82,6 +83,15 @@ public class Background extends Group {
 
     public void clear() {
         this.clearChildren();
+    }
+
+    public void reset() {
+        this.clearActions();
+        this.setColor(getColor().r, getColor().g, getColor().b, 1);
+        for (Actor t : getChildren()) {
+            t.clearActions();
+        }
+
     }
 
 

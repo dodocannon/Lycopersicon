@@ -8,6 +8,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 public class LycoButton extends Actor {
     private Texture tTexture;
     private Viewport tViewport;
+    private float x, y;
 
     public LycoButton(Viewport tViewport, Texture tTexture) {
         this.tViewport = tViewport;
@@ -17,12 +18,15 @@ public class LycoButton extends Actor {
 
     public void init() {
         setSize(tViewport.getScreenWidth() / 12, tViewport.getScreenWidth() / 12);
+        x = getX();
+        y = getY();
 
     }
 
     public void reset() {
         this.clearActions();
         setColor(getColor().r, getColor().g, getColor().b, 1);
+        setPosition(x, y);
     }
 
     @Override

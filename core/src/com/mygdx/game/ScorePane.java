@@ -25,8 +25,9 @@ public class ScorePane extends Actor {
     }
 
     public void init() {
-        setSize(tViewport.getScreenWidth() / 5, tViewport.getScreenHeight() / 9);
-        setPosition(0, 0);
+        setSize(tViewport.getScreenWidth() / 2, tViewport.getScreenHeight() / 3);
+
+        setPosition(tViewport.getScreenWidth() / 2 - getWidth() / 2, tViewport.getScreenHeight());
         tParam = new FreeTypeFontGenerator.FreeTypeFontParameter();
         tLayout = new GlyphLayout();
         tParam.size = (int) (tViewport.getScreenHeight() / 20f);
@@ -49,7 +50,8 @@ public class ScorePane extends Actor {
     }
 
     public void reset() {
-
+        this.clearActions();
+        setPosition(tViewport.getScreenWidth() / 2 - getWidth() / 2, tViewport.getScreenHeight());
     }
 
     @Override
@@ -57,6 +59,6 @@ public class ScorePane extends Actor {
         super.draw(batch, parentAlpha);
         batch.draw(new Texture(Gdx.files.internal("scorePane.png")), getX(), getY(), getWidth(), getHeight());
         tLayout.setText(tFont, "HIGH SCORE: " + tHighScore + "\nSCORE: " + tScore);
-        tFont.draw(batch, tLayout, 50, 50);
+        tFont.draw(batch, tLayout, tViewport.getScreenWidth() / 2 - getWidth() / 4, tViewport.getScreenHeight() / 2 + getHeight() / 1.5f);
     }
 }
