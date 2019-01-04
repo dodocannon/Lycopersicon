@@ -1,5 +1,6 @@
 package com.mygdx.game.Screens;
 
+import com.badlogic.gdx.ApplicationLogger;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Preferences;
@@ -57,6 +58,13 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
  *
  */
 
+/**
+ * debug:
+ * scorepane OK? NO
+ * replayButton OK?YES
+ * homeButton OK?YES
+ */
+
 public class LycopersiconScreen implements Screen {
     public final Lycopersicon game;
 
@@ -71,6 +79,7 @@ public class LycopersiconScreen implements Screen {
     private LycopersiconTitleUI tTitleUI;
     private GameOverUI tGameOverUI;
     private NextLevelUI tNextLevelUI;
+    private GameOverUI test;
     private TomatoCluster tCluster;
     private Background tBackground;
 
@@ -115,8 +124,6 @@ public class LycopersiconScreen implements Screen {
         tData = Gdx.app.getPreferences("LycopersiconData");
 
 
-
-
     }
 
     @Override
@@ -128,6 +135,7 @@ public class LycopersiconScreen implements Screen {
         tTitleUI = new LycopersiconTitleUI(tViewport);
         tGameOverUI = new GameOverUI(tViewport);
         tNextLevelUI = new NextLevelUI(tViewport);
+        test = new GameOverUI(tViewport);
 
 
         tGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Cabin_Sketch/CabinSketch-Regular.ttf"));
@@ -144,9 +152,6 @@ public class LycopersiconScreen implements Screen {
         tNextLevel.setSize(16 * tViewport.getScreenHeight() / 20, 9 * tViewport.getScreenHeight() / 20);
         tNextLevel.setPosition(-tNextLevel.getWidth(), tViewport.getScreenHeight() / 2 - tNextLevel.getHeight());
         Gdx.input.setInputProcessor(tTitleUI);
-
-
-
 
 
     }
@@ -177,11 +182,12 @@ public class LycopersiconScreen implements Screen {
             drawHUD();
 
 
-
         }
         if (Gdx.input.getInputProcessor().equals(tGameOverUI)) {
+            Gdx.app.log("Run", "test");
             tWorld.draw();
-            //drawHUD();
+            drawHUD();
+            test.draw();
             tGameOverUI.draw();
             tGameOverUI.act();
         }
@@ -192,14 +198,12 @@ public class LycopersiconScreen implements Screen {
         }
 
 
-
     }
 
     @Override
     public void resize(int width, int height) {
         tViewport.update(width, height);
         tTileSize = tViewport.getScreenWidth() / 10;
-        //tCluster.init();
         tTapPrompt.init();
 
 
@@ -328,17 +332,15 @@ public class LycopersiconScreen implements Screen {
         Gdx.input.setInputProcessor(tWorld);
 
     }
-    private void setUpTitle()
-    {
 
-        for (int i = 0; i < 50; i++)
-        {
+    private void setUpTitle() {
+
+        for (int i = 0; i < 50; i++) {
             Twinkle t = new Twinkle(tViewport, tViewport.getScreenWidth(), tViewport.getScreenHeight());
 
             tTitleUI.addActor(t);
         }
     }
-
 
 
     /**
@@ -368,7 +370,6 @@ public class LycopersiconScreen implements Screen {
     }
 
 
-
     private void resetGame() {
         tHomeButton.reset();
         tReplayButton.reset();
@@ -390,6 +391,7 @@ public class LycopersiconScreen implements Screen {
         tHomeButton.addAction(Actions.moveTo(tViewport.getScreenWidth() / 2 + tScorePane.getWidth() / 2 - tHomeButton.getWidth(), tViewport.getScreenHeight() / 2 - tScorePane.getHeight() / 2, .1f));
         tReplayButton.setTouchable(Touchable.enabled);
         tHomeButton.setTouchable(Touchable.enabled);
+
         Gdx.input.setInputProcessor(tGameOverUI);
 
     }
@@ -406,10 +408,6 @@ public class LycopersiconScreen implements Screen {
     }
 
 
-
-
-
-
     private void setUpReplayButtonListener() {
         tReplayButton.addListener(new InputListener() {
             @Override
@@ -417,7 +415,7 @@ public class LycopersiconScreen implements Screen {
                 tHomeButton.setTouchable(Touchable.disabled);
                 tReplayButton.setTouchable(Touchable.disabled);
 
-                tReplayButton.addAction(sequence(moveBy(0, -10, .25f), moveBy(0, 10f, .25f), run(new Runnable() {
+                tReplayButton.addAction(sequence(moveBy(0, -tReplayButton.getHeight() / 2, .25f), moveBy(0, tReplayButton.getHeight() / 2, .25f), run(new Runnable() {
                     @Override
                     public void run() {
                         resetGame();
@@ -435,7 +433,7 @@ public class LycopersiconScreen implements Screen {
                 tHomeButton.setTouchable(Touchable.disabled);
                 tReplayButton.setTouchable(Touchable.disabled);
 
-                tHomeButton.addAction(sequence(moveBy(0, -10, .25f), moveBy(0, 10f, .25f), run(new Runnable() {
+                tHomeButton.addAction(sequence(moveBy(0, -tHomeButton.getHeight() / 2, .25f), moveBy(0, tHomeButton.getHeight() / 2, .25f), run(new Runnable() {
                     @Override
                     public void run() {
                         goHome();
