@@ -32,7 +32,7 @@ public class ScorePane extends Actor {
         tParam = new FreeTypeFontGenerator.FreeTypeFontParameter();
         tLayout = new GlyphLayout();
         tParam.size = (int) (tViewport.getScreenHeight() / 20f);
-        tParam.color = Color.RED;
+        tParam.color = Color.ORANGE;
         tFont = tGenerator.generateFont(tParam);
 
     }

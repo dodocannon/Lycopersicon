@@ -36,34 +36,7 @@ import com.mygdx.game.Twinkle;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
-/**
- * Fade out mechanisms,
- * Fade in, faster movement, rotating apples
- * Teleportation(?)
- * How am I going to implement nextlevel?
- *
- *  LEVEL IMPLEMENTATION PSEUDOCODE
- *  if (remaining lycos == 0)
- *  {
- *       run timer.
- *       remove all actors (including cluster
- *       remove the fonts stuff
- *       display level number
- *       screen fade out?
- *       add new cluster
- *
- *  }
- *
- *  bonuslevel score multiplier
- *
- */
 
-/**
- * debug:
- * scorepane OK? NO
- * replayButton OK?YES
- * homeButton OK?YES
- */
 
 public class LycopersiconScreen implements Screen {
     public final Lycopersicon game;
@@ -167,10 +140,8 @@ public class LycopersiconScreen implements Screen {
             tTitleUI.act(delta);
         }
         if (Gdx.input.getInputProcessor().equals(tWorld)) {
-            //tCluster.print();
             if (tCluster.remainingTargets() == 0) {
                 nextLevel();
-                //System.out.println("SSSS");
             }
             if (tTimeLeft <= 0) {
                 gameOver();
@@ -263,9 +234,6 @@ public class LycopersiconScreen implements Screen {
         tBatch.end();
     }
 
-    private void drawTimer() {
-
-    }
 
     private void drawLevel() {
         tBatch.begin();
@@ -319,16 +287,12 @@ public class LycopersiconScreen implements Screen {
         tBackground = new Background(tViewport, tTileSize);
         tBackground.initFarm();
 
-        // tCluster.setPosition(0, 0);
         tCluster.fill();
 
-        //tCluster.addAction(sequence(delay(1f), fadeIn(4f)));
-
-
         tWorld.addActor(tBackground);
-
         tWorld.addActor(tCluster);
         tWorld.addActor(tNextLevel);
+
         Gdx.input.setInputProcessor(tWorld);
 
     }
