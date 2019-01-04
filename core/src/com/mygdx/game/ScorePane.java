@@ -47,6 +47,7 @@ public class ScorePane extends Actor {
     public void dispose() {
         tFont.dispose();
         tGenerator.dispose();
+
     }
 
     public void reset() {
