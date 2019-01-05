@@ -23,6 +23,8 @@ import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.Background;
+import com.mygdx.game.CreditsPane;
+import com.mygdx.game.CreditsUI;
 import com.mygdx.game.GameOverUI;
 import com.mygdx.game.LycoButton;
 import com.mygdx.game.Lycopersicon;
@@ -52,18 +54,19 @@ public class LycopersiconScreen implements Screen {
     private LycopersiconTitleUI tTitleUI;
     private GameOverUI tGameOverUI;
     private NextLevelUI tNextLevelUI;
-    private GameOverUI test;
+    private CreditsUI tCreditsUI;
     private TomatoCluster tCluster;
     private Background tBackground;
 
 
     private TapPrompt tTapPrompt;
     private Image tNextLevel;
-    private LycoButton tReplayButton, tHomeButton;
+    private LycoButton tReplayButton, tHomeButton, tCreditsButton, tBackButton;
     private ScorePane tScorePane;
+    private CreditsPane tCreditsPane;
 
-    private int tStemNumber, tLevel;
-    private float tTileSize, tTimeLeft, tTimeRemain;
+    private int tLevel;
+    private float tTileSize, tTimeLeft;
 
     private Preferences tData;
 
@@ -89,10 +92,13 @@ public class LycopersiconScreen implements Screen {
 
         tReplayButton = new LycoButton(tViewport, new Texture(Gdx.files.internal("replayButton.png")));
         tHomeButton = new LycoButton(tViewport, new Texture(Gdx.files.internal("homeButton.png")));
+        tBackButton = new LycoButton(tViewport, new Texture(Gdx.files.internal("homeButton.png")));
+        tCreditsButton = new LycoButton(tViewport, new Texture(Gdx.files.internal("creditsButton.png")));
+
         tScorePane = new ScorePane(tViewport);
+        tCreditsPane = new CreditsPane(tViewport);
 
         tTimeLeft = 10f;
-        tTimeRemain = 10f;
 
         tData = Gdx.app.getPreferences("LycopersiconData");
 
@@ -108,7 +114,7 @@ public class LycopersiconScreen implements Screen {
         tTitleUI = new LycopersiconTitleUI(tViewport);
         tGameOverUI = new GameOverUI(tViewport);
         tNextLevelUI = new NextLevelUI(tViewport);
-        test = new GameOverUI(tViewport);
+        tCreditsUI = new CreditsUI(tViewport);
 
 
         tGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Cabin_Sketch/CabinSketch-Regular.ttf"));
@@ -135,7 +141,7 @@ public class LycopersiconScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         if (Gdx.input.getInputProcessor().equals(tTitleUI)) {
-
+            tWorld.draw();
             tTitleUI.draw();
             tTitleUI.act(delta);
         }
@@ -155,10 +161,8 @@ public class LycopersiconScreen implements Screen {
 
         }
         if (Gdx.input.getInputProcessor().equals(tGameOverUI)) {
-            Gdx.app.log("Run", "test");
             tWorld.draw();
             drawHUD();
-            test.draw();
             tGameOverUI.draw();
             tGameOverUI.act();
         }
@@ -166,6 +170,11 @@ public class LycopersiconScreen implements Screen {
             tWorld.draw();
             tWorld.act();
             drawLevel();
+        }
+        if (Gdx.input.getInputProcessor().equals(tCreditsUI)) {
+            tWorld.draw();
+            tCreditsUI.draw();
+            tCreditsUI.act();
         }
 
 
@@ -175,25 +184,48 @@ public class LycopersiconScreen implements Screen {
     public void resize(int width, int height) {
         tViewport.update(width, height);
         tTileSize = tViewport.getScreenWidth() / 10;
+
         tTapPrompt.init();
-
-
-        tTitleUI.addActor(tTapPrompt);
         tReplayButton.init();
         tHomeButton.init();
+        tBackButton.init();
+        tCreditsButton.init();
         tScorePane.init();
+        tCreditsPane.init();
 
         tReplayButton.setPosition(tViewport.getScreenWidth() / 2 - tScorePane.getWidth() / 2, tViewport.getScreenHeight());
         tHomeButton.setPosition(tViewport.getScreenWidth() / 2 + tScorePane.getWidth() / 2 - tHomeButton.getWidth(), tViewport.getScreenHeight());
+        tCreditsButton.setPosition(tViewport.getScreenWidth() / 50, tViewport.getScreenWidth() / 50);
+        tBackButton.setPosition(tViewport.getScreenWidth() / 50, tViewport.getScreenHeight());
+
+
+        tLevel = 1;
+
+        tCluster = new TomatoCluster(1, tLevel, tViewport, tTileSize);
+        tBackground = new Background(tViewport, tTileSize);
+        tBackground.initFarm();
+
+        tCluster.fill();
+
+        tTitleUI.addActor(tTapPrompt);
+        tTitleUI.addActor(tCreditsButton);
 
         tGameOverUI.addActor(tReplayButton);
         tGameOverUI.addActor(tHomeButton);
         tGameOverUI.addActor(tScorePane);
 
-        setUpTitle();
+        tCreditsUI.addActor(tCreditsPane);
+        tCreditsUI.addActor(tBackButton);
+
+        tWorld.addActor(tBackground);
+        tWorld.addActor(tNextLevel);
+
+        //setUpTitle(); this allows for a starry background
         setUpTitleUIListener();
         setUpReplayButtonListener();
         setUpHomeButtonListener();
+        setUpCreditsButtonListener();
+        setUpBackButtonListener();
 
     }
 
@@ -219,6 +251,7 @@ public class LycopersiconScreen implements Screen {
         tBatch.dispose();
         tScorePane.dispose();
         tCluster.dispose();
+        tCreditsPane.dispose();
     }
 
     private void drawHUD() {
@@ -241,7 +274,6 @@ public class LycopersiconScreen implements Screen {
         tFont.draw(tBatch, tLayout, tViewport.getScreenWidth() * 4 / 10, tViewport.getScreenHeight() / 2);
         tLayout.setText(tFont, +(double) ((int) (tTimeLeft * 100)) / 100 + "sec");
         tFont.draw(tBatch, tLayout, tViewport.getScreenWidth() / 20, tViewport.getScreenHeight() / 10);
-
         tBatch.end();
     }
 
@@ -249,20 +281,30 @@ public class LycopersiconScreen implements Screen {
         tTitleUI.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                if (event.isHandled()) return true;
+
                 tTapPrompt.clearActions();
-                tTapPrompt.addAction(sequence(parallel(repeat(7, rotateBy(50, .2f)),
+                /*tTapPrompt.addAction(sequence(parallel(repeat(7, rotateBy(50, .2f)),
                         scaleTo(.5f, .5f, 1.4f)), run(new Runnable() {
                     @Override
                     public void run() {
                         setUpWorld();
                     }
-                })));
+                })));*/
+                tTapPrompt.addAction(run(new Runnable() {
+                    @Override
+                    public void run() {
+                        tWorld.addActor(tCluster);
+
+                        Gdx.input.setInputProcessor(tWorld);
+                    }
+                }));
                 return true;
             }
         });
     }
 
-    private void setUpWorldListener() {
+    private void setUpWorldListener() { //possible future easter egg?
         tWorld.addListener(new InputListener() {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
@@ -271,7 +313,6 @@ public class LycopersiconScreen implements Screen {
                     case Input.Keys.M:
                         tCluster.scaleDownVelocity(.7f);
                         break;
-
                 }
                 return true;
             }
@@ -279,19 +320,7 @@ public class LycopersiconScreen implements Screen {
     }
 
     private void setUpWorld() {
-        tLevel = 1;
-        setUpWorldListener();
-        tStemNumber = MathUtils.random(4);
 
-        tCluster = new TomatoCluster(1, tLevel, tViewport, tTileSize);
-        tBackground = new Background(tViewport, tTileSize);
-        tBackground.initFarm();
-
-        tCluster.fill();
-
-        tWorld.addActor(tBackground);
-        tWorld.addActor(tCluster);
-        tWorld.addActor(tNextLevel);
 
         Gdx.input.setInputProcessor(tWorld);
 
@@ -340,6 +369,7 @@ public class LycopersiconScreen implements Screen {
         tCluster.reset();
         tScorePane.reset();
         tBackground.reset();
+        tTapPrompt.reset();
 
         tTimeLeft = 10;
         tLevel = 1;
@@ -408,13 +438,52 @@ public class LycopersiconScreen implements Screen {
         });
     }
 
+    private void setUpBackButtonListener() {
+        tBackButton.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                tBackButton.setTouchable(Touchable.disabled);
+
+                tBackButton.addAction(sequence(moveBy(0, -tBackButton.getHeight() / 2, .25f), moveBy(0, tBackButton.getHeight() / 2, .25f), run(new Runnable() {
+                    @Override
+                    public void run() {
+                        goHome();
+                    }
+                })));
+                return true;
+            }
+        });
+    }
+
+    private void setUpCreditsButtonListener() {
+        tCreditsButton.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                tCreditsButton.setTouchable(Touchable.disabled);
+                tCreditsButton.addAction(sequence(moveBy(0, -tCreditsButton.getHeight() / 2, .25f), moveBy(0, tCreditsButton.getHeight() / 2, .25f), run(new Runnable() {
+                    @Override
+                    public void run() {
+                        tCreditsPane.addAction(Actions.moveTo(tViewport.getScreenWidth() / 2 - tCreditsPane.getWidth() / 2, tViewport.getScreenHeight() / 2 - tCreditsPane.getHeight() / 2, .1f));
+                        tBackButton.addAction(Actions.moveTo(tViewport.getScreenWidth() / 50, tViewport.getScreenWidth() / 50, .1f));
+                        Gdx.input.setInputProcessor(tCreditsUI);
+                    }
+                })));
+                return true;
+            }
+
+        });
+    }
+
     private void goHome() {
         tHomeButton.reset();
         tReplayButton.reset();
+        tBackButton.reset();
         tCluster.reset();
         tTapPrompt.reset();
         tScorePane.reset();
         tBackground.reset();
+        tCreditsPane.reset();
+        tCreditsButton.reset();
 
         tTimeLeft = 10;
         tLevel = 1;

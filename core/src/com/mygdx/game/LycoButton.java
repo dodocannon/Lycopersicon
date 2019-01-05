@@ -3,6 +3,8 @@ package com.mygdx.game;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class LycoButton extends Actor {
@@ -25,6 +27,7 @@ public class LycoButton extends Actor {
 
     public void reset() {
         this.clearActions();
+        this.setTouchable(Touchable.enabled);
         setColor(getColor().r, getColor().g, getColor().b, 1);
         setPosition(x, y);
     }
