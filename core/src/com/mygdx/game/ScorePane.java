@@ -53,6 +53,7 @@ public class ScorePane extends Actor {
 
     public void reset() {
         this.clearActions();
+        setColor(getColor().r, getColor().g, getColor().b, 1);
 
         setPosition(tViewport.getScreenWidth() / 2 - getWidth() / 2, tViewport.getScreenHeight());
     }
@@ -60,6 +61,7 @@ public class ScorePane extends Actor {
     @Override
     public void draw(Batch batch, float parentAlpha) {
         super.draw(batch, parentAlpha);
+        batch.setColor(getColor().r, getColor().g, getColor().b, getColor().a * parentAlpha);
         batch.draw(tPaneTexture, getX(), getY(), getWidth(), getHeight());
         tLayout.setText(tFont, "HIGHEST LEVEL: " + tHighScore + "\nDEAD AT LEVEL: " + tScore);
         tFont.draw(batch, tLayout, tViewport.getScreenWidth() / 2 - getWidth() / 4, getY() + getHeight() / 1.5f);

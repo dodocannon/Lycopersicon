@@ -46,7 +46,7 @@ public class CreditsPane extends Actor {
 
     public void reset() {
         this.clearActions();
-
+        setColor(getColor().r, getColor().g, getColor().b, 1);
         setPosition(tViewport.getScreenWidth() / 2 - getWidth() / 2, tViewport.getScreenHeight());
     }
 

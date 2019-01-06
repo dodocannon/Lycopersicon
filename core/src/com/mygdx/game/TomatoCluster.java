@@ -165,7 +165,7 @@ public class TomatoCluster extends Group {
                 tTargets--;
                 this.removeActor(t);
                 t.remove();
-                System.out.println("removed");
+
             }
         }
     }
