@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -74,6 +75,7 @@ public class LycopersiconScreen implements Screen {
     private float tTileSize, tTimeLeft;
 
     private Preferences tData;
+    private Sound tSound;
 
     private Image tStars;
     Pool<MoveToAction> actionPool = new Pool<MoveToAction>() { //Action pooling enables action recycling: more memory efficient
@@ -108,6 +110,8 @@ public class LycopersiconScreen implements Screen {
         tTimeLeft = 10f;
 
         tData = Gdx.app.getPreferences("LycopersiconData");
+        tSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/pop.mp3"));
+
 
 
     }
@@ -272,6 +276,7 @@ public class LycopersiconScreen implements Screen {
         tScorePane.dispose();
         tCluster.dispose();
         tCreditsPane.dispose();
+        tSound.dispose();
     }
 
     private void drawHUD() {
@@ -441,12 +446,14 @@ public class LycopersiconScreen implements Screen {
         tReplayButton.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                tSound.play();
                 tHomeButton.setTouchable(Touchable.disabled);
                 tReplayButton.setTouchable(Touchable.disabled);
 
                 tReplayButton.addAction(sequence(moveBy(0, -tReplayButton.getHeight() / 4, .25f), moveBy(0, tReplayButton.getHeight() / 4, .25f), run(new Runnable() {
                     @Override
                     public void run() {
+
                         tReplayButton.addAction(fadeOut(.25f));
                         tScorePane.addAction(fadeOut(.25f));
                         tHomeButton.addAction(fadeOut(.25f));
@@ -466,6 +473,8 @@ public class LycopersiconScreen implements Screen {
         tHomeButton.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+
+                tSound.play();
                 tHomeButton.setTouchable(Touchable.disabled);
                 tReplayButton.setTouchable(Touchable.disabled);
 
@@ -492,7 +501,7 @@ public class LycopersiconScreen implements Screen {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 tBackButton.setTouchable(Touchable.disabled);
-
+                tSound.play();
                 tBackButton.addAction(sequence(moveBy(0, -tBackButton.getHeight() / 4, .25f), moveBy(0, tBackButton.getHeight() / 4, .25f), run(new Runnable() {
                     @Override
                     public void run() {
@@ -514,6 +523,7 @@ public class LycopersiconScreen implements Screen {
         tCreditsButton.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                tSound.play();
                 tCreditsButton.setTouchable(Touchable.disabled);
                 tCreditsButton.addAction(sequence(moveBy(0, -tCreditsButton.getHeight() / 4, .25f), moveBy(0, tCreditsButton.getHeight() / 4, .25f), run(new Runnable() {
                     @Override
@@ -540,6 +550,8 @@ public class LycopersiconScreen implements Screen {
         tTutorialButton.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                tSound.play();
+
                 tTutorialButton.setTouchable(Touchable.disabled);
                 tTutorialButton.addAction(sequence(moveBy(0, -tCreditsButton.getHeight() / 4, .25f), moveBy(0, tCreditsButton.getHeight() / 4, .25f), run(new Runnable() {
                     @Override
