@@ -87,7 +87,6 @@ public class Background extends Group {
 
     public void reset() {
         this.clearActions();
-        this.setColor(getColor().r, getColor().g, getColor().b, 1);
         for (Actor t : getChildren()) {
             t.clearActions();
         }

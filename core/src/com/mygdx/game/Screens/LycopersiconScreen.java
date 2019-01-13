@@ -1,6 +1,5 @@
 package com.mygdx.game.Screens;
 
-import com.badlogic.gdx.ApplicationLogger;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Preferences;
@@ -13,7 +12,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
@@ -352,7 +350,7 @@ public class LycopersiconScreen implements Screen {
         });
     }
 
-    private void setUpWorldListener() { //possible future easter egg?
+    private void setUpWorldsListener() { //possible future easter egg?
         tWorld.addListener(new InputListener() {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
@@ -390,10 +388,11 @@ public class LycopersiconScreen implements Screen {
      */
     private void nextLevel() {
         Gdx.input.setInputProcessor(tNextLevelUI);
-        if (tLevel >= 5) {
-            tBackground.clear();
+        if (tLevel >= 0) {
+            tBackground.initSpace();
             tBackground.initSpace2();
         }
+
 
         tCluster.addAction(Actions.removeActor());
         tCluster.raiseDifficulty();
