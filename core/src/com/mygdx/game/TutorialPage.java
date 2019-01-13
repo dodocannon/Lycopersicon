@@ -42,6 +42,7 @@ public class TutorialPage extends Actor {
     }
 
     public void reset() {
+        setColor(getColor().r, getColor().g, getColor().b, 1);
         clearActions();
         index = 0;
     }
@@ -49,6 +50,8 @@ public class TutorialPage extends Actor {
     @Override
     public void draw(Batch batch, float parentAlpha) {
         batch.setColor(getColor().r, getColor().g, getColor().b, getColor().a * parentAlpha);
+        System.out.println(index);
+
         batch.draw(tTutorialContainer[index], tViewport.getScreenWidth() / 2 - tViewport.getScreenHeight() / 2, -tViewport.getScreenHeight() / 15, tViewport.getScreenHeight(), tViewport.getScreenHeight());
 
     }

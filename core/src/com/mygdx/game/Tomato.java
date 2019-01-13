@@ -70,7 +70,7 @@ public class Tomato extends Actor {
         actionCompleted = true;
 
         tomatoSprite = new TextureRegion(new Texture(Gdx.files.internal("tomato"+tomatoNumber+".png")));
-        tShotSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/autism.mp3"));
+        tShotSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/splat1.mp3"));
         //setColor(getColor().r, getColor().g, getColor().b, 1);
         init();
     }
