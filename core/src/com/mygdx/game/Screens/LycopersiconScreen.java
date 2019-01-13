@@ -388,7 +388,7 @@ public class LycopersiconScreen implements Screen {
      */
     private void nextLevel() {
         Gdx.input.setInputProcessor(tNextLevelUI);
-        if (tLevel >= 0) {
+        if (tLevel >= 5) {
             tBackground.initSpace();
             tBackground.initSpace2();
         }
