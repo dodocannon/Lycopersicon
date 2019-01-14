@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 
@@ -17,6 +18,12 @@ public class TomatoCluster extends Group {
 
 
     private Viewport globalViewport;
+    private final Pool<Tomato> tomatoPool = new Pool<Tomato>() {
+        @Override
+        protected Tomato newObject() {
+            return new Tomato();
+        }
+    };
 
     public TomatoCluster(float tomatoX, float velocity, Viewport globalViewport, float tileSize)
     {
@@ -49,10 +56,15 @@ public class TomatoCluster extends Group {
         offset = (screenW - (tomatoX * tomatoSize))/(tomatoX+1);
         appleTarget = MathUtils.random(4);
         int rand;
+
+
         if (tomatoX <= 20) {
             for (int i = 0; i < tomatoX; i++) {
                 rand = MathUtils.random(4);
-                Tomato curr = new Tomato((i == 0) ? appleTarget : rand, (i == 0) ? true : rand == appleTarget, globalViewport, MathUtils.random(screenW - screenW / 12), MathUtils.random(screenH - 2 * tileSize - screenW / 12), getRandomVelocity(), getRandomVelocity(), tileSize, screenW / 12);
+                Tomato curr = tomatoPool.obtain();
+                Tomato x = new Tomato();
+                x.initTomato((i == 0) ? appleTarget : rand, (i == 0) ? true : rand == appleTarget, globalViewport, MathUtils.random(screenW - screenW / 12), MathUtils.random(screenH - 2 * tileSize - screenW / 12), getRandomVelocity(), getRandomVelocity(), tileSize, screenW / 12);
+                curr.initTomato((i == 0) ? appleTarget : rand, (i == 0) ? true : rand == appleTarget, globalViewport, MathUtils.random(screenW - screenW / 12), MathUtils.random(screenH - 2 * tileSize - screenW / 12), getRandomVelocity(), getRandomVelocity(), tileSize, screenW / 12);
                 if (curr.isRightTomato()) {
                     tTargets++;
                     //curr.startCountdown();
@@ -60,8 +72,12 @@ public class TomatoCluster extends Group {
                 }
 
                 addActor(curr);
+                //addActor(x);
+                System.out.println("Added " + curr.toString());
+                System.out.println(x.toString());
 
             }
+            System.out.println(getChildren());
         } else {
 
             float posX = 0;
@@ -71,15 +87,14 @@ public class TomatoCluster extends Group {
                         posX += tomatoSize;
                     }
                     posX += offset;
-                    /**
-                     * This is for the curr when apples start to get clutter the screen (systematic spread out positioning)
-                     */
-                    Tomato curr = new Tomato((i == 0) ? appleTarget : rand, (i == 0) ? true : rand == appleTarget, globalViewport, posX, 0, 0, getRandomVelocity(), tileSize, tomatoSize);
-                    if (curr.isRightTomato()) {
+
+
+                    //Tomato curr = new Tomato((i == 0) ? appleTarget : rand, (i == 0) ? true : rand == appleTarget, globalViewport, posX, 0, 0, getRandomVelocity(), tileSize, tomatoSize);
+                  /*  if (curr.isRightTomato()) {
                         tTargets++;
                     }
 
-                    this.addActor(curr);
+                    this.addActor(curr);*/
 
 
                 }
@@ -95,7 +110,19 @@ public class TomatoCluster extends Group {
 
     public void reset()
     {
-        dispose();
+        System.out.println("reset");
+        for (Actor t : getChildren()) {
+            Tomato x = (Tomato) t;
+
+            x.dispose();
+
+
+            tomatoPool.free(x);
+
+
+        }
+        clearChildren();
+
         tTargets = 0;
         //setPosition(0,0);
         tomatoX = 1;
@@ -149,7 +176,11 @@ public class TomatoCluster extends Group {
 
     public void dispose() {
         for (Actor t : getChildren()) {
-            t.addAction(Actions.removeActor());
+            Tomato x = (Tomato) t;
+            //x.addAction(Actions.removeActor());
+            x.dispose();
+            tomatoPool.free(x);
+            System.out.println("freed via dispose");
 
 
         }
@@ -160,10 +191,17 @@ public class TomatoCluster extends Group {
         super.act(delta);
         for (Actor t : getChildren())
         {
-            if (((Tomato) t).isAlreadyExploded())
+            Tomato x = (Tomato) t;
+            if (x.isAlreadyExploded())
             {
+                System.out.println("EXXXPXLODDEd");
                 tTargets--;
-                this.removeActor(t);
+                //x.addAction(Actions.removeActor());
+
+
+                //removeActor(t);
+
+
                 t.remove();
 
             }

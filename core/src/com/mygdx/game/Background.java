@@ -5,26 +5,30 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-public class Background extends Group {
+public class Background extends Actor {
     /*
     for ease of setting the background image
      */
     private Tile mainBackground, woodBackground;
     private Viewport tViewport;
     private float tileSize;
+    private Texture grass, wood;
 
     public Background(Viewport tViewport, float tileSize)
     {
         this.tileSize = tileSize;
         this.tViewport = tViewport;
+        grass = new Texture(Gdx.files.internal("grass1.jpg"));
+        wood = new Texture(Gdx.files.internal("wood.jpg"));
 
 
     }
 
-    public void initFarm()
+   /* public void initFarm()
     {
         for (int i = 0; i < tViewport.getScreenHeight(); i+=tileSize)
         {
@@ -79,24 +83,42 @@ public class Background extends Group {
         for (int i = 0; i < 20; i++) {
             addActor(new Twinkle(tViewport, tViewport.getScreenWidth(), tViewport.getScreenHeight() - tileSize));
         }
-    }
+    }*/
 
     public void clear() {
-        this.clearChildren();
+        this.remove();
     }
 
     public void reset() {
         this.clearActions();
-        for (Actor t : getChildren()) {
-            t.clearActions();
-        }
+        this.remove();
 
     }
 
 
     @Override
+    public void act(float delta) {
+        super.act(delta);
+    }
+
+    @Override
     public void draw(Batch batch, float parentAlpha) {
         super.draw(batch, parentAlpha);
+        for (int i = 0; i < tViewport.getScreenHeight(); i += tileSize) {
+            for (int j = 0; j < tViewport.getScreenWidth(); j += tileSize) {
+               /* mainBackground = new Tile(new Texture(Gdx.files.internal("grass1.jpg")));
+                mainBackground.setSize(tileSize, tileSize);
+                mainBackground.setPosition(j, i);
+                addActor(mainBackground);*/
+                batch.draw(grass, j, i, tileSize, tileSize);
+            }
+        }
+        for (int i = 1; i <= 1; i++) {
+            for (int k = 0; k < tViewport.getScreenWidth(); k += tileSize) {
+
+                batch.draw(wood, k, tViewport.getScreenHeight() - i * tileSize, tileSize, tileSize);
+            }
+        }
 
 
     }

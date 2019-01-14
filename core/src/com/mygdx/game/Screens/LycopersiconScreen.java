@@ -77,14 +77,7 @@ public class LycopersiconScreen implements Screen {
     private Sound tSound, tNextLevelSound;
     private Music tMusic;
 
-    private Image tStars;
-    Pool<MoveToAction> actionPool = new Pool<MoveToAction>() { //Action pooling enables action recycling: more memory efficient
-        protected MoveToAction newObject() {
-            return new MoveToAction();
-        }
-    };
 
-    //private boolean test = false;
 
     public LycopersiconScreen(Lycopersicon game) {
         this.game = game;
@@ -149,6 +142,7 @@ public class LycopersiconScreen implements Screen {
         Gdx.input.setInputProcessor(tTitleUI);
 
 
+
     }
 
     @Override
@@ -172,6 +166,7 @@ public class LycopersiconScreen implements Screen {
             tTimeLeft -= delta;
             tWorld.draw();
             tWorld.act(delta);
+            // tBackground.act(delta);
             drawHUD();
 
 
@@ -203,6 +198,7 @@ public class LycopersiconScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         //tMusic.play();
+
         tViewport.update(width, height);
         tTileSize = tViewport.getScreenWidth() / 10;
 
@@ -226,8 +222,8 @@ public class LycopersiconScreen implements Screen {
         tLevel = 1;
 
         tCluster = new TomatoCluster(1, tLevel, tViewport, tTileSize);
-        tBackground = new Background(tViewport, tTileSize);
-        tBackground.initFarm();
+        //tBackground.initFarm();
+        System.out.println("SSS");
 
         tCluster.fill();
 
@@ -242,8 +238,9 @@ public class LycopersiconScreen implements Screen {
         tCreditsUI.addActor(tCreditsPane);
         tCreditsUI.addActor(tBackButton);
 
-        tWorld.addActor(tBackground);
-        tWorld.addActor(tNextLevel);
+        //tWorld.addActor(tBackground);
+        //tWorld.addActor(tNextLevel);
+        //tBackground.remove();
 
         tTutorialUI.addActor(tTutorialPage);
 
@@ -255,6 +252,7 @@ public class LycopersiconScreen implements Screen {
         setUpHomeButtonListener();
         setUpCreditsButtonListener();
         setUpBackButtonListener();
+        //tWorld.addActor(tBackground);
 
     }
 
@@ -309,6 +307,7 @@ public class LycopersiconScreen implements Screen {
     }
 
     private void setUpTitleUIListener() {
+
         tTitleUI.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -325,8 +324,10 @@ public class LycopersiconScreen implements Screen {
                 tTapPrompt.addAction(run(new Runnable() {
                     @Override
                     public void run() {
-                        tWorld.addActor(tCluster);
+                        tBackground = new Background(tViewport, tTileSize);
 
+                        tWorld.addActor(tBackground);
+                        tWorld.addActor(tCluster);
                         Gdx.input.setInputProcessor(tWorld);
                         tMusic.pause();
                     }
@@ -399,9 +400,10 @@ public class LycopersiconScreen implements Screen {
         //tNextLevelSound.play();
         tMusic.play();
         Gdx.input.setInputProcessor(tNextLevelUI);
-        if (tLevel >= 5) {
-            tBackground.initSpace();
-            tBackground.initSpace2();
+        if (tLevel >= 0) {
+            tBackground.addAction(Actions.removeActor(tBackground));
+            System.out.println(tWorld.getActors());
+            System.out.println(tCreditsUI.getActors());
         }
 
 

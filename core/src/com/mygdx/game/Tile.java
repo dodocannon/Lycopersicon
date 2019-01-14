@@ -18,4 +18,9 @@ public class Tile extends Actor {
         batch.setColor(getColor().r, getColor().g, getColor().b, getColor().a * parentAlpha);
         batch.draw(tTexture, getX(), getY(), getWidth(), getHeight());
     }
+
+    @Override
+    public void act(float delta) {
+        super.act(delta);
+    }
 }
