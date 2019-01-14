@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -73,7 +74,8 @@ public class LycopersiconScreen implements Screen {
     private float tTileSize, tTimeLeft;
 
     private Preferences tData;
-    private Sound tSound, tNextLevelSound, tMusic;
+    private Sound tSound, tNextLevelSound;
+    private Music tMusic;
 
     private Image tStars;
     Pool<MoveToAction> actionPool = new Pool<MoveToAction>() { //Action pooling enables action recycling: more memory efficient
@@ -107,10 +109,11 @@ public class LycopersiconScreen implements Screen {
 
         tTimeLeft = 10f;
 
+
         tData = Gdx.app.getPreferences("LycopersiconData");
         tSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/pop.mp3"));
         tNextLevelSound = Gdx.audio.newSound(Gdx.files.internal("Sounds/twinkle.mp3"));
-        tMusic = Gdx.audio.newSound(Gdx.files.internal("Sounds/music.mp3"));
+        tMusic = Gdx.audio.newMusic(Gdx.files.internal("Sounds/music.mp3"));
 
 
 
@@ -119,7 +122,7 @@ public class LycopersiconScreen implements Screen {
 
     @Override
     public void show() {
-
+        tMusic.setLooping(true);
         tMusic.play();
         tWorld = new TomatoWorld(tViewport, tBatch); // 800 x 480 world
 
@@ -394,7 +397,7 @@ public class LycopersiconScreen implements Screen {
      */
     private void nextLevel() {
         //tNextLevelSound.play();
-        tMusic.resume();
+        tMusic.play();
         Gdx.input.setInputProcessor(tNextLevelUI);
         if (tLevel >= 5) {
             tBackground.initSpace();
@@ -427,7 +430,7 @@ public class LycopersiconScreen implements Screen {
     }
 
     private void gameOver() {
-        tMusic.resume();
+        tMusic.play();
         updateHighScore();
         tScorePane.addAction(Actions.moveTo(tViewport.getScreenWidth() / 2 - tScorePane.getWidth() / 2, tViewport.getScreenHeight() / 2, .1f));
         tReplayButton.addAction(Actions.moveTo(tViewport.getScreenWidth() / 2 - tScorePane.getWidth() / 2, tViewport.getScreenHeight() / 2 - tScorePane.getHeight() / 2, .1f));
@@ -455,6 +458,7 @@ public class LycopersiconScreen implements Screen {
         tReplayButton.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+
                 tSound.play();
                 tHomeButton.setTouchable(Touchable.disabled);
                 tReplayButton.setTouchable(Touchable.disabled);
