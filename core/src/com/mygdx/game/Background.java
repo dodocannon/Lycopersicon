@@ -17,6 +17,7 @@ public class Background extends Actor {
     private Viewport tViewport;
     private float tileSize;
     private Texture grass, wood;
+    private boolean space;
 
     public Background(Viewport tViewport, float tileSize)
     {
@@ -24,9 +25,19 @@ public class Background extends Actor {
         this.tViewport = tViewport;
         grass = new Texture(Gdx.files.internal("grass1.jpg"));
         wood = new Texture(Gdx.files.internal("wood.jpg"));
+        space = false;
 
 
     }
+
+    public void spacetime() {
+        space = true;
+    }
+
+    public void farmtime() {
+        space = false;
+    }
+
 
    /* public void initFarm()
     {
@@ -90,9 +101,8 @@ public class Background extends Actor {
     }
 
     public void reset() {
-        this.clearActions();
-        this.remove();
 
+        farmtime();
     }
 
 
@@ -103,20 +113,33 @@ public class Background extends Actor {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        super.draw(batch, parentAlpha);
-        for (int i = 0; i < tViewport.getScreenHeight(); i += tileSize) {
-            for (int j = 0; j < tViewport.getScreenWidth(); j += tileSize) {
+        //super.draw(batch, parentAlpha);'
+        batch.setColor(getColor().r, getColor().g, getColor().b, getColor().a * parentAlpha);
+
+        if (space) {
+            for (int i = 1; i <= 1; i++) {
+                for (int k = 0; k < tViewport.getScreenWidth(); k += tileSize) {
+
+                    batch.draw(wood, k, tViewport.getScreenHeight() - i * tileSize, tileSize, tileSize);
+                }
+            }
+        } else {
+
+
+            for (int i = 0; i < tViewport.getScreenHeight(); i += tileSize) {
+                for (int j = 0; j < tViewport.getScreenWidth(); j += tileSize) {
                /* mainBackground = new Tile(new Texture(Gdx.files.internal("grass1.jpg")));
                 mainBackground.setSize(tileSize, tileSize);
                 mainBackground.setPosition(j, i);
                 addActor(mainBackground);*/
-                batch.draw(grass, j, i, tileSize, tileSize);
+                    batch.draw(grass, j, i, tileSize, tileSize);
+                }
             }
-        }
-        for (int i = 1; i <= 1; i++) {
-            for (int k = 0; k < tViewport.getScreenWidth(); k += tileSize) {
+            for (int i = 1; i <= 1; i++) {
+                for (int k = 0; k < tViewport.getScreenWidth(); k += tileSize) {
 
-                batch.draw(wood, k, tViewport.getScreenHeight() - i * tileSize, tileSize, tileSize);
+                    batch.draw(wood, k, tViewport.getScreenHeight() - i * tileSize, tileSize, tileSize);
+                }
             }
         }
 

@@ -11,14 +11,12 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
-import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pool.Poolable;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import java.util.Arrays;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.run;
 
@@ -42,6 +40,7 @@ public class Tomato extends Actor implements Poolable {
 
     private Timer timer;
 
+
     //SequenceAction sequenceAction;
 
 
@@ -58,6 +57,8 @@ public class Tomato extends Actor implements Poolable {
         actionCompleted = false;
         setTouchable(Touchable.enabled);
         explosionFrame = null;
+
+
         //  tomatoSprite = new TextureRegion(new Texture(Gdx.files.internal("tomato"+tomatoNumber+".png")));
 
     }
@@ -161,6 +162,7 @@ public class Tomato extends Actor implements Poolable {
      */
     public void dispose() {
         tShotSound.dispose();
+
     }
     @Override
     public void act(float delta) {

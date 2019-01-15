@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
@@ -76,6 +77,14 @@ public class LycopersiconScreen implements Screen {
     private Preferences tData;
     private Sound tSound, tNextLevelSound;
     private Music tMusic;
+
+    private final Pool<Twinkle> twinklePool = new Pool<Twinkle>() {
+        @Override
+        protected Twinkle newObject() {
+            return new Twinkle(tViewport, tViewport.getScreenWidth(), tViewport.getScreenHeight());
+        }
+    };
+
 
 
 
@@ -154,6 +163,8 @@ public class LycopersiconScreen implements Screen {
             tWorld.draw();
             tTitleUI.draw();
             tTitleUI.act(delta);
+            tCluster.getFree();
+
         }
         if (Gdx.input.getInputProcessor().equals(tWorld)) {
             if (tCluster.remainingTargets() == 0) {
@@ -166,7 +177,6 @@ public class LycopersiconScreen implements Screen {
             tTimeLeft -= delta;
             tWorld.draw();
             tWorld.act(delta);
-            // tBackground.act(delta);
             drawHUD();
 
 
@@ -181,6 +191,8 @@ public class LycopersiconScreen implements Screen {
             tWorld.draw();
             tWorld.act();
             drawLevel();
+            tCluster.getFree();
+
         }
         if (Gdx.input.getInputProcessor().equals(tCreditsUI)) {
             tWorld.draw();
@@ -198,7 +210,7 @@ public class LycopersiconScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         //tMusic.play();
-
+        tBackground = new Background(tViewport, tTileSize);
         tViewport.update(width, height);
         tTileSize = tViewport.getScreenWidth() / 10;
 
@@ -223,7 +235,6 @@ public class LycopersiconScreen implements Screen {
 
         tCluster = new TomatoCluster(1, tLevel, tViewport, tTileSize);
         //tBackground.initFarm();
-        System.out.println("SSS");
 
         tCluster.fill();
 
@@ -281,6 +292,9 @@ public class LycopersiconScreen implements Screen {
         tCreditsPane.dispose();
         tSound.dispose();
         tNextLevelSound.dispose();
+        tMusic.dispose();
+        twinklePool.clear();
+        tCluster.clearPool();
     }
 
     private void drawHUD() {
@@ -324,12 +338,11 @@ public class LycopersiconScreen implements Screen {
                 tTapPrompt.addAction(run(new Runnable() {
                     @Override
                     public void run() {
-                        tBackground = new Background(tViewport, tTileSize);
 
-                        tWorld.addActor(tBackground);
-                        tWorld.addActor(tCluster);
+
+                        resetGame();
                         Gdx.input.setInputProcessor(tWorld);
-                        tMusic.pause();
+                        tMusic.setVolume(.1f);
                     }
                 }));
                 return true;
@@ -346,6 +359,7 @@ public class LycopersiconScreen implements Screen {
                     tTutorialPage.addAction(Actions.sequence(fadeOut(.25f), run(new Runnable() {
                         @Override
                         public void run() {
+                            tMusic.setVolume(1.0f);
                             tTutorialPage.reset();
                             Gdx.input.setInputProcessor(tTitleUI);
                         }
@@ -397,14 +411,16 @@ public class LycopersiconScreen implements Screen {
      * sets tCluster to a more "difficult" cluster
      */
     private void nextLevel() {
-        //tNextLevelSound.play();
-        tMusic.play();
+        tMusic.setVolume(1f);
+
         Gdx.input.setInputProcessor(tNextLevelUI);
-        if (tLevel >= 0) {
-            tBackground.addAction(Actions.removeActor(tBackground));
-            System.out.println(tWorld.getActors());
-            System.out.println(tCreditsUI.getActors());
+        for (Actor t : tWorld.getActors()) {
+            if (t instanceof Twinkle) {
+                t.addAction(Actions.removeActor());
+                twinklePool.free((Twinkle) t);
+            }
         }
+
 
 
         tCluster.addAction(Actions.removeActor());
@@ -415,9 +431,20 @@ public class LycopersiconScreen implements Screen {
             @Override
             public void run() {
                 Gdx.input.setInputProcessor(tWorld);
+                if (tLevel >= 0) {
+
+                    tBackground.spacetime();
+
+                    for (int i = 0; i < 20; i++) {
+
+                        tWorld.addActor(twinklePool.obtain());
+                    }
+
+
+                }
                 tWorld.addActor(tCluster);
                 tTimeLeft = 10;
-                tMusic.pause();
+                tMusic.setVolume(.1f);
 
             }
         }, 3, 0, 0);
@@ -426,13 +453,23 @@ public class LycopersiconScreen implements Screen {
 
     private void resetGame() {
         reset();
+        tBackground.remove();
+        tCluster.remove();
+        tWorld.addActor(tBackground);
+        tWorld.addActor(tCluster);
         Gdx.input.setInputProcessor(tWorld);
 
 
     }
 
     private void gameOver() {
-        tMusic.play();
+        for (Actor t : tWorld.getActors()) {
+            if (t instanceof Twinkle) {
+                t.addAction(Actions.removeActor());
+                twinklePool.free((Twinkle) t);
+            }
+        }
+        tMusic.setVolume(1f);
         updateHighScore();
         tScorePane.addAction(Actions.moveTo(tViewport.getScreenWidth() / 2 - tScorePane.getWidth() / 2, tViewport.getScreenHeight() / 2, .1f));
         tReplayButton.addAction(Actions.moveTo(tViewport.getScreenWidth() / 2 - tScorePane.getWidth() / 2, tViewport.getScreenHeight() / 2 - tScorePane.getHeight() / 2, .1f));
@@ -476,7 +513,10 @@ public class LycopersiconScreen implements Screen {
                 }), delay(.25f), run(new Runnable() {
                     @Override
                     public void run() {
-                        tMusic.pause();
+                        tCluster.reset();
+                        tWorld.addActor(tBackground);
+                        tWorld.addActor(tCluster);
+                        tMusic.setVolume(.1f);
                         resetGame();
                     }
                 })));
@@ -551,6 +591,7 @@ public class LycopersiconScreen implements Screen {
                 }), delay(.25f), run(new Runnable() {
                     @Override
                     public void run() {
+                        tMusic.setVolume(.05f);
                         tCreditsPane.addAction(Actions.moveTo(tViewport.getScreenWidth() / 2 - tCreditsPane.getWidth() / 2, tViewport.getScreenHeight() / 2 - tCreditsPane.getHeight() / 2, .1f));
                         tBackButton.addAction(Actions.moveTo(tViewport.getScreenWidth() / 50, tViewport.getScreenWidth() / 50, .1f));
                         Gdx.input.setInputProcessor(tCreditsUI);
@@ -579,6 +620,7 @@ public class LycopersiconScreen implements Screen {
                 }), delay(.25f), run(new Runnable() {
                     @Override
                     public void run() {
+                        tMusic.setVolume(.05f);
                         reset();
                         Gdx.input.setInputProcessor(tTutorialUI);
                     }
@@ -591,7 +633,7 @@ public class LycopersiconScreen implements Screen {
 
     private void goHome() {
         reset();
-
+        tMusic.setVolume(1.0f);
 
 
         tTimeLeft = 10;
@@ -604,7 +646,7 @@ public class LycopersiconScreen implements Screen {
         tHomeButton.reset();
         tReplayButton.reset();
         tBackButton.reset();
-        tCluster.reset();
+        //tCluster.reset();
         tTutorialButton.reset();
         tTapPrompt.reset();
         tScorePane.reset();

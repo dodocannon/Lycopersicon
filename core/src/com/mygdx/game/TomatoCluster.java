@@ -72,12 +72,9 @@ public class TomatoCluster extends Group {
                 }
 
                 addActor(curr);
-                //addActor(x);
-                System.out.println("Added " + curr.toString());
-                System.out.println(x.toString());
+
 
             }
-            System.out.println(getChildren());
         } else {
 
             float posX = 0;
@@ -110,7 +107,6 @@ public class TomatoCluster extends Group {
 
     public void reset()
     {
-        System.out.println("reset");
         for (Actor t : getChildren()) {
             Tomato x = (Tomato) t;
 
@@ -180,10 +176,10 @@ public class TomatoCluster extends Group {
             //x.addAction(Actions.removeActor());
             x.dispose();
             tomatoPool.free(x);
-            System.out.println("freed via dispose");
 
 
         }
+        clearChildren();
 
     }
     @Override
@@ -194,14 +190,13 @@ public class TomatoCluster extends Group {
             Tomato x = (Tomato) t;
             if (x.isAlreadyExploded())
             {
-                System.out.println("EXXXPXLODDEd");
                 tTargets--;
                 //x.addAction(Actions.removeActor());
 
 
                 //removeActor(t);
 
-
+                tomatoPool.free(x);
                 t.remove();
 
             }
@@ -219,6 +214,14 @@ public class TomatoCluster extends Group {
         fill();
 
 
+    }
+
+    public void clearPool() {
+        tomatoPool.clear();
+    }
+
+    public void getFree() {
+        //System.out.println(tomatoPool.getFree());
     }
 
     public void print() {

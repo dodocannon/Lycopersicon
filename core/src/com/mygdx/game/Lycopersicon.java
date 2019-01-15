@@ -6,16 +6,17 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.mygdx.game.Screens.IntroScreen;
 import com.mygdx.game.Screens.LycopersiconScreen;
 
 public class Lycopersicon extends Game {
-	SpriteBatch batch;
+	public SpriteBatch batch;
 	Texture img;
 	
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		this.setScreen(new LycopersiconScreen(this));
+		this.setScreen(new IntroScreen(this));
 	}
 
 	@Override
