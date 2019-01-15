@@ -10,22 +10,33 @@ import com.mygdx.game.Screens.IntroScreen;
 import com.mygdx.game.Screens.LycopersiconScreen;
 
 public class Lycopersicon extends Game {
-	public SpriteBatch batch;
-	Texture img;
-	
+	private IntroScreen tIntroScreen;
+	private LycopersiconScreen tGameScreen;
+	private Game game;
+
+
 	@Override
 	public void create () {
-		batch = new SpriteBatch();
-		this.setScreen(new IntroScreen(this));
+
+		setScreen(new LycopersiconScreen(this));
 	}
+
 
 	@Override
 	public void render () {
+/*
+		if (getScreen().equals(tIntroScreen) && tIntroScreen.tElapsedTime > 2.5)
+		{
+			tIntroScreen.dispose();
+
+			setScreen(tGameScreen);
+		}
+*/
 		super.render();
 	}
 	
 	@Override
 	public void dispose () {
-		batch.dispose();
+
 	}
 }

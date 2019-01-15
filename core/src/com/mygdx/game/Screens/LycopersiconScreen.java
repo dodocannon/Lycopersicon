@@ -44,7 +44,6 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
 
 public class LycopersiconScreen implements Screen {
-    public final Lycopersicon game;
 
     private ScreenViewport tViewport;
     private SpriteBatch tBatch;
@@ -78,6 +77,8 @@ public class LycopersiconScreen implements Screen {
     private Sound tSound, tNextLevelSound;
     private Music tMusic;
 
+    private Lycopersicon tGame;
+
     private final Pool<Twinkle> twinklePool = new Pool<Twinkle>() {
         @Override
         protected Twinkle newObject() {
@@ -86,10 +87,9 @@ public class LycopersiconScreen implements Screen {
     };
 
 
+    public LycopersiconScreen(Lycopersicon tGame) {
+        this.tGame = tGame;
 
-
-    public LycopersiconScreen(Lycopersicon game) {
-        this.game = game;
         tLevel = 1;
         tViewport = new ScreenViewport();
 
@@ -163,7 +163,6 @@ public class LycopersiconScreen implements Screen {
             tWorld.draw();
             tTitleUI.draw();
             tTitleUI.act(delta);
-            tCluster.getFree();
 
         }
         if (Gdx.input.getInputProcessor().equals(tWorld)) {
@@ -191,7 +190,6 @@ public class LycopersiconScreen implements Screen {
             tWorld.draw();
             tWorld.act();
             drawLevel();
-            tCluster.getFree();
 
         }
         if (Gdx.input.getInputProcessor().equals(tCreditsUI)) {
@@ -210,8 +208,8 @@ public class LycopersiconScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         //tMusic.play();
+        tViewport.update(width, height, true);
         tBackground = new Background(tViewport, tTileSize);
-        tViewport.update(width, height);
         tTileSize = tViewport.getScreenWidth() / 10;
 
         tTapPrompt.init();
