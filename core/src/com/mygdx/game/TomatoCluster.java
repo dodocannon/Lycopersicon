@@ -62,8 +62,6 @@ public class TomatoCluster extends Group {
             for (int i = 0; i < tomatoX; i++) {
                 rand = MathUtils.random(4);
                 Tomato curr = tomatoPool.obtain();
-                Tomato x = new Tomato();
-                x.initTomato((i == 0) ? appleTarget : rand, (i == 0) ? true : rand == appleTarget, globalViewport, MathUtils.random(screenW - screenW / 12), MathUtils.random(screenH - 2 * tileSize - screenW / 12), getRandomVelocity(), getRandomVelocity(), tileSize, screenW / 12);
                 curr.initTomato((i == 0) ? appleTarget : rand, (i == 0) ? true : rand == appleTarget, globalViewport, MathUtils.random(screenW - screenW / 12), MathUtils.random(screenH - 2 * tileSize - screenW / 12), getRandomVelocity(), getRandomVelocity(), tileSize, screenW / 12);
                 if (curr.isRightTomato()) {
                     tTargets++;
@@ -85,13 +83,13 @@ public class TomatoCluster extends Group {
                     }
                     posX += offset;
 
-
-                    //Tomato curr = new Tomato((i == 0) ? appleTarget : rand, (i == 0) ? true : rand == appleTarget, globalViewport, posX, 0, 0, getRandomVelocity(), tileSize, tomatoSize);
-                  /*  if (curr.isRightTomato()) {
+                    Tomato curr = tomatoPool.obtain();
+                    curr.initTomato((i == 0) ? appleTarget : rand, (i == 0) ? true : rand == appleTarget, globalViewport, posX, 0, 0, getRandomVelocity(), tileSize, tomatoSize);
+                    if (curr.isRightTomato()) {
                         tTargets++;
                     }
 
-                    this.addActor(curr);*/
+                    this.addActor(curr);
 
 
                 }
@@ -210,7 +208,7 @@ public class TomatoCluster extends Group {
         //setPosition(0,0);
         tomatoX += 2;
 
-        velocity = velocity * 1.25f;
+        velocity += 1;
         fill();
 
 

@@ -247,9 +247,6 @@ public class LycopersiconScreen implements Screen {
         tCreditsUI.addActor(tCreditsPane);
         tCreditsUI.addActor(tBackButton);
 
-        //tWorld.addActor(tBackground);
-        //tWorld.addActor(tNextLevel);
-        //tBackground.remove();
 
         tTutorialUI.addActor(tTutorialPage);
 
@@ -429,7 +426,7 @@ public class LycopersiconScreen implements Screen {
             @Override
             public void run() {
                 Gdx.input.setInputProcessor(tWorld);
-                if (tLevel >= 0) {
+                if (tLevel >= 6) {
 
                     tBackground.spacetime();
 
@@ -644,7 +641,7 @@ public class LycopersiconScreen implements Screen {
         tHomeButton.reset();
         tReplayButton.reset();
         tBackButton.reset();
-        //tCluster.reset();
+        tCluster.reset();
         tTutorialButton.reset();
         tTapPrompt.reset();
         tScorePane.reset();
