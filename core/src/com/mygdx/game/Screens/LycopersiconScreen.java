@@ -18,7 +18,6 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Timer;
@@ -250,7 +249,6 @@ public class LycopersiconScreen implements Screen {
 
         tTutorialUI.addActor(tTutorialPage);
 
-        //setUpTitle(); this allows for a starry background
         setUpTutorialUIListener();
         setUpTutorialButtonListener();
         setUpTitleUIListener();
@@ -258,7 +256,7 @@ public class LycopersiconScreen implements Screen {
         setUpHomeButtonListener();
         setUpCreditsButtonListener();
         setUpBackButtonListener();
-        //tWorld.addActor(tBackground);
+
 
     }
 
